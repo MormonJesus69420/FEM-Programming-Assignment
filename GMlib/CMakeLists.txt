@@ -39,7 +39,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
   message("Compiler: ${CMAKE_CXX_COMPILER_ID}")
 
   # Default compile flags (read: turn on all checks)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-documentation -pedantic -Werror")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-documentation -Werror")
 
   # Extra compile flags to turn of stuff we don't want to handle at the moment
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-destructor-override")

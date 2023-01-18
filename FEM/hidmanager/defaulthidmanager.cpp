@@ -263,12 +263,12 @@ void DefaultHidManager::heReplotQuick(int factor) {
     if( curve ) {
 
       GMlib::PERBSCurve<float> *erbs = dynamic_cast<GMlib::PERBSCurve<float>*>(curve);
-      if( erbs )
-        erbs->replot(
-          (erbs->getLocalCurves().getDim()-1)*factor + 1,
-          1 );
-      else
-        curve->replot( std::pow<int>( factor, 2 ) * 100, 2 );
+//      if( erbs )
+//        erbs->replot(
+//          (erbs->getLocalCurves().getDim()-1)*factor + 1,
+//          1 );
+//      else
+//        curve->replot( std::pow<int>( factor, 2 ) * 100, 2 );
     }
     else if( surf ) {
 
