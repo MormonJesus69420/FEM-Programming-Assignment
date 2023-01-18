@@ -220,62 +220,17 @@ namespace GMlib {
   //********************************************************
 
   template <typename T>
-  void PBSplineSurf<T>::edit( int selector_id, const Vector<T,3>& dp  ) {
+  void PBSplineSurf<T>::edit( int /*selector_id*/ ) {
 
     _c_moved = true;
-      if( this->_parent ) this->_parent->edit( this );
-      _pos_change.push_back(EditSet(selector_id, dp));
-      this->setEditDone();
+
+    if( this->_parent )
+      this->_parent->edit( this );
+
+    if(_sgv)
+        _sgv->update();
+
     _c_moved = false;
-  }
-
-
-
-//  template <typename T>
-//  inline
-//  void PBSplineSurf<T>::insertVisualizer( Visualizer *visualizer ) {
-
-//    SceneObject::insertVisualizer( visualizer );
-
-//    PSurfVisualizer<T,3> *visu = dynamic_cast<PSurfVisualizer<T,3>*>( visualizer );
-//    if( !visu )
-//      return;
-
-//    for(int i=0; i < _visu.getDim1(); i++)
-//        for(int j=0; j < _visu.getDim2(); j++) {
-//            _visu[i][j].vis += visu;
-//        }
-//  }
-
-
-
-
-  template <typename T>
-  void PBSplineSurf<T>::replot( ) const{
-
-          int d1 = this->_no_der_u;
-          int d2 = this->_no_der_v;
-
-          DMatrix< DMatrix< Vector<T,3> > >   p;
-          DMatrix< Vector<float,3> >          normals;
-          Sphere<T,3>                         s;
-
-          for(int i=0; i<_vpu.getDim(); i++)
-              for(int j=0; j<_vpv.getDim(); j++) {
-
-                  // Sample Positions and related Derivatives
-                  resample(p, _ru[i], _rv[j], _vpu[i].m, _vpv[j].m, d1, d2 );
-
-                  // Compute normals at the sample points
-                  this->resampleNormals( p, normals );
-
-                  this->uppdateSurroundingSphere(s, p);
-
-                  // Replot Visaulizers
-                  for( int k = 0; k < _visu[i][j].vis.getSize(); k++ )
-                      _visu[i][j].vis[k]->replot( p, normals, _vpu[i].m, _vpv[j].m, d1, d2, false, false );
-              }
-          Parametrics<T,2,3>::setSurroundingSphere(s);
   }
 
 
@@ -284,6 +239,7 @@ namespace GMlib {
   //**************************************************
   // Overrided (public) virtual functons from PSurf **
   //**************************************************
+
 
   template <typename T>
   void PBSplineSurf<T>::replot( int m1, int m2, int d1, int d2 ) {
@@ -305,7 +261,7 @@ namespace GMlib {
           else            this->_no_der_v = d2;
 
           DMatrix< DMatrix< Vector<T,3> > >   p;
-          DMatrix< Vector<float,3> >          normals;
+          DMatrix< Vector<T,3> >              normals;
           Sphere<T,3>                         s;
 
           for(int i=0; i<_vpu.getDim(); i++)
@@ -348,9 +304,9 @@ namespace GMlib {
 
       _s.setDim( _c.getDim1(), _c.getDim2() );
 
-      for( int i = 0; i < _c.getDim1(); i++ )
+      for( int i = 0, s_id = 0; i < _c.getDim1(); i++ )
           for( int j = 0; j < _c.getDim2(); j++ ) {
-              Selector<T,3> *sel = new Selector<T,3>( _c[i][j], _map2(i, j), this, rad, selector_color );
+              Selector<T,3> *sel = new Selector<T,3>( _c[i][j], s_id++, this, rad, selector_color );
               this->insert( sel );
               _s[i][j] = sel;
           }
@@ -393,18 +349,6 @@ namespace GMlib {
 
 
 
-  /*! void PBSplineSurf<T>::toggleSelectors()
-   *  To toggle the selectors and selector grid.
-   */
-  template <typename T>
-  void PBSplineSurf<T>::toggleSelectors() {
-
-    if(_selectors)  hideSelectors();
-    else            showSelectors();
-  }
-
-
-
   //*****************************************************
   // Overrided (protected) virtual functons from PSurf **
   //*****************************************************
@@ -414,7 +358,7 @@ namespace GMlib {
   void PBSplineSurf<T>::eval( T u, T v, int du, int dv, bool lu, bool lv ) const {
 
       DMatrix<T>   bu, bv;
-      std::vector<int> ind_i(_ku), ind_j(_kv);
+      DVector<int> ind_i(_ku), ind_j(_kv);
 
       int i = EvaluatorStatic<T>::evaluateBSp( bu, u, _u, _du, lu) - _du;
       int j = EvaluatorStatic<T>::evaluateBSp( bv, v, _v, _dv, lv) - _dv;
@@ -521,7 +465,7 @@ namespace GMlib {
 
 
   template <typename T>
-  void PBSplineSurf<T>::resample( DMatrix< DMatrix< Vector<T,3> > >& p, int m1, int m2, int d1, int d2, T s_u, T s_v, T e_u, T e_v ) const {
+  void PBSplineSurf<T>::resample( DMatrix< DMatrix< Vector<T,3> > >& p, int m1, int m2, int d1, int d2, T s_u, T s_v, T e_u, T e_v ) {
 
       p.setDim(m1, m2);
 
@@ -533,7 +477,7 @@ namespace GMlib {
 
 
   template <typename T>
-  void PBSplineSurf<T>::resample( DMatrix< DMatrix< Vector<T,3> > >& p, const DVector<PreMat<T>>& bu, const DVector<PreMat<T>>& bv, int m1, int m2, int d1, int d2 ) const {
+  void PBSplineSurf<T>::resample( DMatrix< DMatrix< Vector<T,3> > >& p, const DVector<PreMat>& bu, const DVector<PreMat>& bv, int m1, int m2, int d1, int d2 ) {
 
       p.setDim(m1, m2);
 
@@ -550,7 +494,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void PBSplineSurf<T>::makeIndex( std::vector<int>& ind, int i, int k, int n) const{
+  void PBSplineSurf<T>::makeIndex( DVector<int>& ind, int i, int k, int n) const{
 
       if(i+k > n){
           int j, s = n-i;
@@ -568,7 +512,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void PBSplineSurf<T>::multEval(DMatrix<Vector<T,3>>& p, const DMatrix<T>& bu, const DMatrix<T>& bv, const std::vector<int>& ii, const std::vector<int>& ij, int du, int dv) const {
+  void PBSplineSurf<T>::multEval(DMatrix<Vector<T,3>>& p, const DMatrix<T>& bu, const DMatrix<T>& bv, const DVector<int>& ii, const DVector<int>& ij, int du, int dv) const {
 
       // Set Dimensions
       p.setDim(du+1,dv+1);
@@ -583,9 +527,9 @@ namespace GMlib {
 
       for(int i=0; i< _ku; i++)
           for(int j=0; j<=dv; j++) {
-              c[i][j] = _c(ii[i])(ij[0])*bv(j)(0);
+              c[i][j] = _c(ii(i))(ij(0))*bv(j)(0);
               for(int k=1; k<_kv; k++)
-                  c[i][j] += _c(ii[i])(ij[k])*bv(j)(k);
+                  c[i][j] += _c(ii(i))(ij(k))*bv(j)(k);
           }
       //    p = bu * c
       for(int i=0; i<=dv; i++)
@@ -627,22 +571,27 @@ namespace GMlib {
   }
 
 
-  // pre-evaluation of basis fuctions, the B-spline-Hermite matrix, independent of direction
+  // Sampling for pre-evaluation, independent of direction
   //*******************************************************
   template <typename T>
   inline
-  void PBSplineSurf<T>::preSample( DVector< PreMat<T> >& p, const DVector<T>& t, int m, int d, int n, T start, T end ) {
+  void PBSplineSurf<T>::preSample( DVector< PreMat >& p, const DVector<T>& t, int m, int d, int n, T start, T end ) {
 
-      const T dt = ( end - start ) / T(m-1); // dt is the step in parameter values
-      p.setDim(m);      // p is a vector of  Bernstein-Hermite matrises at the sample points
+      // compute dt (step in parameter)
+      const T dt = ( end - start ) / T(m-1);
 
-      // Compute the Bernstein-Hermite matrix
+      // Set the dimension of the Bernstein-Hermite Polynomial DVector
+      p.setDim(m);
+
+      // Compute the Bernstein-Hermite Polynomiale, for the B-spline Surface
       for( int j = 0; j < m-1; j++ ) {
-          int i = EvaluatorStatic<T>::evaluateBSp( p[j].m, start+j*dt, t, d, false );// - d;
-          p[j].ind.init( i, d+1, n);
+          int i = EvaluatorStatic<T>::evaluateBSp( p[j].m, start+j*dt, t, d, false ) - d;
+          p[j].ind.setDim(d+1);
+          makeIndex(p[j].ind, i, d+1, n);
       }
-      int i = EvaluatorStatic<T>::evaluateBSp( p[m-1].m, end, t, d, true );// - d;
-      p[m-1].ind.init( i, d+1, n);
+      int i = EvaluatorStatic<T>::evaluateBSp( p[m-1].m, end, t, d, true ) - d;
+      p[m-1].ind.setDim(d+1);
+      makeIndex(p[m-1].ind, i, d+1, n);
   }
 
 
@@ -653,14 +602,14 @@ namespace GMlib {
 
       VisPart<T> pu( t, k, dis );
       SampNr<T>  su( t, pu, m );
-      vp.setDim(su.size());
+      vp.setDim(su.getDim());
       for(int i=0; i<vp.getDim(); i++) {
           vp[i].m  = su[i];
           vp[i].is = pu[2*i];
           vp[i].ie = pu[2*i+1];
       }
 
-      // Inserting vizualizers
+      // Ready for final initialization
       if(_partitioned[0] && _partitioned[1]) {
           _visu.setDim(_vpu.getDim(), _vpv.getDim());
           for(int i=0; i<_visu.getDim1(); i++)
@@ -673,30 +622,6 @@ namespace GMlib {
               }
       }
   }
-
-
-
-  template <typename T>
-  inline
-  Vector<int,2> PBSplineSurf<T>::_map1(int i) const {
-
-      Vector<int,2> j;
-      int n = _c.getDim2();
-      j[0] = i/n;
-      j[1] = i%n;
-      return j;
-  }
-
-
-  template <typename T>
-  inline
-  int PBSplineSurf<T>::_map2(int i, int j) const {
-
-      int n = _c.getDim2();
-      return i*n+j;
-  }
-
-
 
 } // END namespace GMlib
 

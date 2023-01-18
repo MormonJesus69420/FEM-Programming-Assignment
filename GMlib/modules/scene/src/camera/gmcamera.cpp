@@ -119,7 +119,7 @@ namespace GMlib {
   double Camera::deltaTranslate(SceneObject* obj) {
 
     if(obj)
-      return 26*(getDir()*(obj->getPos()-getPos()))*getNearPlane()/(getFocalLength()*getViewportH());
+      return 26.0*(double(getDir()*(obj->getPos()-getPos())))*double(getNearPlane()/(getFocalLength()*getViewportH()));
     else
       return 0.0;
   }
@@ -149,7 +149,7 @@ namespace GMlib {
 
       const HqMatrix<float,3> mat = _matrix*_matrix_scene_inv;
       const Vector<float,3> dv = mat*Point<float,3>(obj->getCenterPos());
-      return dv.getLength();
+      return double(dv.getLength());
     }
     else
       return 0.0;
@@ -258,7 +258,7 @@ namespace GMlib {
    */
   void Camera::zoom(float z) {
 
-    setFocalLength(z*_focal_length);
+    setFocalLength(double(z)*_focal_length);
   }
 
 
@@ -274,7 +274,7 @@ namespace GMlib {
     _frustum_near = 1.0;
     _frustum_far  = 100.0;
     _eye_dist  = 0.08;
-    setFocalLength(z*50);
+    setFocalLength(double(z)*50.0);
     setSurroundingSphere(Sphere<float,3>(Point<float,3>(0,0,0),1.0));
     setCoordSysVisible();
     setFrustumVisible();

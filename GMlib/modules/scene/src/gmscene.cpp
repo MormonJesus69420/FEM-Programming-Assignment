@@ -383,15 +383,6 @@ namespace GMlib {
   }
 
 
-
-  void Scene::getEditedObjects(Array<const SceneObject*>& e_obj) const {
-
-      for(int i=0; i< _scene.getSize(); i++)
-          _scene(i)->getEditedObjects(e_obj);
-  }
-
-
-
 } // END namespace GMlib
 
 

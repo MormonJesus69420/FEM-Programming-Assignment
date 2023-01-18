@@ -47,19 +47,9 @@ namespace GMlib {
       GM_SCENEOBJECT(PBSplineSurf)
 
   private:
-    struct EditSet {
-        Vector<int,2> ind;         //!< Index of a selector and thus a control point
-        Vector<T,3>   dp;          //!< The distance the control point has been moved
-        EditSet(const Vector<int,2>& i, const Vector<T,3>& d): ind(i),dp(d){}
-    };
-
-  struct CpIndex : public DVector<Matrix<int,2,2>> {
-  };                      //!<Indices of sample points affected by a given control point
-
-
       // For storing of pre evaluated basis functions
-//      struct PreMat  { DMatrix< T > m; DVector<int> ind; };
-//      struct VisuPar { int m, is, ie; };
+      struct PreMat  { DMatrix< T > m; DVector<int> ind; };
+      struct VisuPar { int m, is, ie; };
       struct VisuSet { Array< PSurfVisualizer<T,3>* > vis; Vector<T,2> s_u, s_v;};
 
   public:
@@ -79,7 +69,7 @@ namespace GMlib {
       // Can only be used if the dimensions are not changed
       void                       setControlPoints( const DMatrix< Vector<T,3> >& cp );
 
-      // This function is not meant for public use, it is for editing on the surface
+      // This function is not meant for public use, it is for editing on hierarchically defined surfaces
       void                       updateCoeffs( const Vector<T,3>& d );
 
       // This function is enabeling visulization - an alternative to toggleDefaultVisualizer()
@@ -90,28 +80,20 @@ namespace GMlib {
       //***************************************
 
       // from SceneObject
-      // This function is not meant for public use, it is for editing on the surface
-      void                       edit( int selector, const Vector<T,3>& dp ) override;
-      void                       replot() const override;
-
-//      void                       insertVisualizer( Visualizer *visualizer ) override; // Is also in PSurf
-//      void                       removeVisualizer( Visualizer *visualizer ) override; // Is also in PSurf
-
+      // This function is not meant for public use, it is for editing on hierarchically defined surfaces
+      virtual void               edit( int selector ) override;
 
       // from PSurf
-      void                       replot( int m1, int m2, int d1 = 0, int d2 = 0 ) override;
+      void                       replot( int m1 = 0, int m2 = 0, int d1 = 0, int d2 = 0 ) override;
       bool                       isClosedU() const override;
       bool                       isClosedV() const override;
-      void                       showSelectors( T rad = T(1), bool grid = false,
-                                                const Color& selector_color = GMcolor::darkBlue(),
-                                                const Color& grid_color = GMcolor::lightGreen() ) override;
+      void                       showSelectors( T rad = T(1), bool grid = false, const Color& _selector_color = GMcolor::darkBlue(), const Color& grid_color = GMcolor::lightGreen() ) override;
       void                       hideSelectors() override;
-      void                       toggleSelectors() override;
 
 
   protected:
       // Protected data for the surface
-
+      mutable
       DMatrix< Vector<T,3> >     _c;       // control polygon
 
       DVector<T>                 _u;       // knot vector in u-direction
@@ -131,11 +113,11 @@ namespace GMlib {
       int                        _pcv;     // Partition criteria v-dir (continuity C^_pcv)
 
       // Pre-evaluation in visualization
-      mutable DVector<DVector<PreMat<T>>>   _ru;      // Pre-evaluation of basis in u-direction
-      mutable DVector<DVector<PreMat<T>>>   _rv;      // Pre-evaluation of basis in v-direction
-      mutable DVector<VisuPar>           _vpu;
-      mutable DVector<VisuPar>           _vpv;
-      mutable DMatrix<VisuSet>           _visu;
+      DVector<DVector<PreMat>>   _ru;      // Pre-evaluation of basis in u-direction
+      DVector<DVector<PreMat>>   _rv;      // Pre-evaluation of basis in v-direction
+      DVector<VisuPar>           _vpu;
+      DVector<VisuPar>           _vpv;
+      DMatrix<VisuSet>           _visu;
 
       // Selectors and selector grid
       bool                       _selectors;        // Mark if we have selectors or not
@@ -146,8 +128,7 @@ namespace GMlib {
       Color                      _grid_color;
       bool                       _grid;
 
-      bool                         _c_moved; // Mark that we are editing, moving controll points
-      mutable std::vector<EditSet> _pos_change; //!< The step vector of control points that is moved
+      bool                       _c_moved; // Mark that we are editing, moving controll points
 
       // Virtual function from PSurf that has to be implemented locally
       void                       eval( T u, T v, int d1 = 0, int d2 = 0, bool lu = false, bool lv = false ) const override; // Abstract in PSurf
@@ -164,19 +145,17 @@ namespace GMlib {
       // Virtual function from PSurf
       void                       preSample( int dir, int m ) override;
 
-      void                       resample( DMatrix<DMatrix <Vector<T,3> > >& a, int m1, int m2, int d1, int d2, T s_u = T(0), T s_v = T(0), T e_u = T(0), T e_v = T(0)) const override;
-      void                       resample( DMatrix<DMatrix <Vector<T,3> > >& p, const DVector<PreMat<T>>& bu, const DVector<PreMat<T>>& bv, int m1, int m2, int d1, int d2 ) const;
+      void                       resample( DMatrix<DMatrix <Vector<T,3> > >& a, int m1, int m2, int d1, int d2, T s_u = T(0), T s_v = T(0), T e_u = T(0), T e_v = T(0)) override;
+      void                       resample( DMatrix<DMatrix <Vector<T,3> > >& p, const DVector<PreMat>& bu, const DVector<PreMat>& bv, int m1, int m2, int d1, int d2 );
 
       // Help functions
-      void                       makeIndex( std::vector<int>& ind, int i, int k, int n) const;
-      void                       multEval( DMatrix<Vector<T,3>>& p, const DMatrix<T>& bu, const DMatrix<T>& bv, const std::vector<int>& i, const std::vector<int>&  j, int du, int dv) const;
+      void                       makeIndex( DVector<int>& ind, int i, int k, int n) const;
+      void                       multEval( DMatrix<Vector<T,3>>& p, const DMatrix<T>& bu, const DMatrix<T>& bv, const DVector<int>& i, const DVector<int>&  j, int du, int dv) const;
       void                       initKnot( DVector<T>& t, bool& c, int& k, const DVector<T>& g, int n, int d, T dt = T(0) );
       void                       initKnot2( DVector<T>& t, bool& c, const DVector<T>& g, int n, int d );
 
-      void                       preSample( DVector< PreMat<T> >& p, const DVector<T>& t, int m, int d, int n, T start, T end );
+      void                       preSample( DVector< PreMat >& p, const DVector<T>& t, int m, int d, int n, T start, T end );
       void                       makePartition( DVector<VisuPar>& vp, const DVector<T>& t, int k, int dis, int m );
-      Vector<int,2>              _map1(int i) const;
-      int                        _map2(int i, int j) const;
 
 
 

@@ -85,7 +85,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void TriangleFacetsVisualizer<T>::replot( const TriangleFacets<T>* /*tf*/ ) const {}
+  void TriangleFacetsVisualizer<T>::replot( TriangleFacets<T>* /*tf*/ ) {}
 
 
 

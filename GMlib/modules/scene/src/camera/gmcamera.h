@@ -203,13 +203,13 @@ namespace GMlib {
     float                       _frustum_angle_tan;
 
 
-    int isInsideFrustum(const Sphere<float,3>& s) const {
+    int                           isInsideFrustum(const Sphere<float,3>& s) const {
 
       if(!s.isValid())  return -1;
       int ret = 1;
 
       Vector<float,3> d = s.getPos()-_frustum_p[0];
-      float dv = d*_frustum_v[1];          // Høyre
+      float dv = d*_frustum_v[1];              // Høyre
       if(dv >= s.getRadius())    return -1;
       else if(dv > -s.getRadius())  ret = 0;
       dv = d*_frustum_v[2];                // Opp
@@ -219,7 +219,7 @@ namespace GMlib {
       if(dv >= s.getRadius())    return -1;
       else if(dv > -s.getRadius())  ret = 0;
 
-      d = s.getPos()-_frustum_p[1];
+      d=s.getPos()-_frustum_p[1];
       dv = d*_frustum_v[0];                // Venstre
       if(dv >= s.getRadius())    return -1;
       else if(dv > -s.getRadius())  ret = 0;
@@ -277,20 +277,20 @@ namespace GMlib {
     virtual void              computeFrustumBounds() {
 
       float ratio = getAspectRatio() * _frustum_angle_tan;
-      double rr = sqrt(1+ratio*ratio);
-      double tt = sqrt(1+_frustum_angle_tan*_frustum_angle_tan);
+      double rr = sqrt(1+double(ratio)*double(ratio));
+      double tt = sqrt(1+double(_frustum_angle_tan)*double(_frustum_angle_tan));
       Vector<float,3> f  = _matrix_scene*_dir;
       Vector<float,3> oe = _matrix_scene*_up;
       Vector<float,3> ve = _matrix_scene*_side;
-      Vector<float,3> pp = ratio*ve-_frustum_angle_tan*oe;
+      Vector<float,3> pp = double(ratio)*ve-double(_frustum_angle_tan)*oe;
       _frustum_p[0] = _matrix_scene*_pos;      // Venstre, høyre, opp, ned (posisjon)
-      _frustum_p[1] = _frustum_p[0]+_frustum_far*(f+pp);
-      _frustum_p[0] += _frustum_near*(f-pp);
+      _frustum_p[1] = _frustum_p[0]+double(_frustum_far)*(f+pp);
+      _frustum_p[0] += double(_frustum_near)*(f-pp);
 
-      _frustum_v[0] = ve-ratio*f;      // Venstre  (normal)
+      _frustum_v[0] = ve-double(ratio)*f;      // Venstre  (normal)
       _frustum_v[1] = (_frustum_v[0]-2*ve)/rr;  // Høyre  (normal)
       _frustum_v[0] /= rr;
-      _frustum_v[2] = oe-_frustum_angle_tan*f;      // Opp    (normal)
+      _frustum_v[2] = oe-double(_frustum_angle_tan)*f;      // Opp    (normal)
       _frustum_v[3] = (_frustum_v[2]-2*oe)/tt;  // ned    (normal)
       _frustum_v[2] /= tt;
       _frustum_v[4] = -f;        // Bak    (normal)
@@ -647,7 +647,7 @@ namespace GMlib {
 
     _frustum_near      = near_plane;
     _frustum_far       = far_plane;
-    _frustum_angle_tan = 13.0f*_frustum_near/_focal_length;
+    _frustum_angle_tan = 13.0*double(_frustum_near)/_focal_length;
     updateFrustum();
   }
 
@@ -687,7 +687,7 @@ namespace GMlib {
 
     _focal_length      = focal;
     _ed_fd             = _eye_dist/_focal_length;
-    _frustum_angle_tan = 13.0f*_frustum_near/_focal_length;
+    _frustum_angle_tan = 13.0*double(_frustum_near)/_focal_length;
     updateFrustum();
   }
 

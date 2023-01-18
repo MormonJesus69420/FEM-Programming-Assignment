@@ -26,3 +26,8 @@ project(parametrics)
 
 # Add source directory
 add_subdirectory(src)
+
+# Add unit test directory
+include_directories(src)
+add_subdirectory(benchmarks)
+add_subdirectory(tests)

@@ -139,7 +139,7 @@ namespace GMlib {
 
 
   template <typename T, int n>
-  void PSurfDefaultVisualizer<T,n>::replot( const DMatrix< DMatrix< Vector<T, n> > >& p, const DMatrix< Vector<float, 3> >& normals,
+  void PSurfDefaultVisualizer<T,n>::replot( const DMatrix< DMatrix< Vector<T, n> > >& p, const DMatrix< Vector<T, 3> >& normals,
                                             int /*m1*/, int /*m2*/, int /*d1*/, int /*d2*/, bool closed_u, bool closed_v ) {
 
     PSurfVisualizer<T,n>::fillStandardVBO( _vbo, p );

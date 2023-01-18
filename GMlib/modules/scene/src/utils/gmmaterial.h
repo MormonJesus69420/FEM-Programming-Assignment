@@ -458,8 +458,8 @@ namespace GMlib {
   inline
   bool Material::operator==(const Material& m) const {
 
-    return _amb == m._amb && _dif == m._dif && _spc == m._spc
-           && GMutils::compValueF(_shininess, m._shininess);
+    return _amb == m._amb and _dif == m._dif and _spc == m._spc
+           and GMutils::compValueF(_shininess, m._shininess);
     /* && _texture == m._texture*/
   }
 

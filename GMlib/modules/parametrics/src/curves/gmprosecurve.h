@@ -37,13 +37,9 @@ namespace GMlib {
   class PRoseCurve : public PCurve<T,3> {
     GM_SCENEOBJECT(PRoseCurve)
   public:
-    PRoseCurve( T radius = T(5), T rize = T(0.1)  );
+    PRoseCurve( int n = 7, int m = 4, T radius = T(5) );
     PRoseCurve( const PRoseCurve<T>& copy );
     virtual ~PRoseCurve();
-
-    // Public local functions
-    T               getRize() const;
-    void            setRize( T rize = T(0.1) );
 
     //****************************************
     //****** Virtual public functions   ******
@@ -53,14 +49,18 @@ namespace GMlib {
     bool                isClosed() const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
 
     // Protected data for the curve
-    T             _r;
-    T             _rize;
+    T               _r;
+    int             _n;
+    int             _m;
+    int             _l;
+    T               _k;
+    T               _k2;
 
   }; // END PRoseCurve
 

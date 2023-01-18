@@ -309,9 +309,6 @@ namespace GMlib {
       };
 
 
-
-
-
       template <int n>
       class Static_For_Dim_<n,n> {
       public:
@@ -332,53 +329,7 @@ namespace GMlib {
 
         }
       };
-
-
-
-
-
-      template< typename G>
-      inline
-      void computeHelp2( std::vector<double[3]>& b, const G& t, bool closed, int k ) {
-
-        int s = k-1;
-
-        std::vector<double[2]> a(k);
-        for(int i=0; i<k; i++) {
-            a[i][0] = t[i+1]-t[i];
-            a[i][1] = a[i][0]*a[i][0];
-        }
-
-        if(closed) {
-            double d = a[s][1]*a[0][0] + a[s][0]*a[0][1];
-            b[0][0]  = b[k][0] = -a[0][1]/d;
-            b[0][1]  = b[k][1] = (a[0][1]-a[s][1])/d;
-            b[0][2]  = b[k][2] = a[s][1]/d;
-        }else {
-            double d = a[0][1]*a[1][0] + a[0][0]*a[1][1];
-            b[0][0]  = -a[1][0]*(2*a[0][0]+a[1][0])/d;
-            b[0][1]  = (a[0][0]+a[1][0])*(a[0][0]+a[1][0])/d;
-            b[0][2]  = -a[0][1]/d;
-            d = a[s-1][1]*a[s][0] + a[s-1][0]*a[s][1];
-            b[k][0]  =  a[s][1]/d;
-            b[k][1]  = -(a[s-1][0]+a[s][0])*(a[s-1][0]+a[s][0])/d;
-            b[k][2]  =  a[s-1][0]*(2*a[s][0]+a[s-1][0])/d;
-        }
-        for(int i=1; i<k; i++) {
-            double d = a[i-1][1]*a[i][0] + a[i-1][0]*a[i][1];
-            b[i][0]  = -a[i][1]/d;
-            b[i][1]  = (a[i][1]-a[i-1][1])/d;
-            b[i][2]  = a[i-1][1]/d;
-        }
-      }
-
     }
-
-
-    /***********************************************************************************************/
-
-
-
 
 
     template <typename T>
@@ -400,10 +351,6 @@ namespace GMlib {
       return acos(a3/sqrt(a1*a2))*sqrt((a1+a6*a6/a5)/(v0*v0));
     }
 
-
-
-
-
     template< typename T>
     inline
     void compute1D( T& p, double dt, bool closed, int d, int ed ) {
@@ -411,56 +358,27 @@ namespace GMlib {
       assert( ed >= 0 );
 
       double dt2 = 2*dt;
-      int k = p.size()-1;
+      int k = p.getDim()-1;
 
       for(int i = 1+ed; i <= ed+d; i++) {
+
         int i1 = i-1;
 
         for(int l = 1; l < k; l++) // ordinary diviedd differences
           p[l][i] = (p[l+1][i1] - p[l-1][i1])/dt2;
 
-        if(closed)  // biting its own tail
-          p[k][i] = p[0][i] = (p[1][i1] - p[k-1][i1])/dt2;
-        else {      // second degree endpoints diviedd differences
+        if(closed) // biting its own tail
+        {
+          p[0][i] = (p[1][i1] - p[k-1][i1])/dt2;
+          p[k][i] = p[0][i];
+        }
+        else // second degree endpoints diviedd differences
+        {
           p[0][i] = ( 4*p[1][i1]   - 3*p[0][i1] - p[2][i1]  )/dt2;
           p[k][i] = (-4*p[k-1][i1] + 3*p[k][i1] + p[k-2][i1])/dt2;
         }
       }
     }
-
-
-
-
-
-
-    template< typename T, typename G>
-    inline
-    void compute1D( T& p, const G& t, bool closed, int d, int ed ) {
-
-      assert( ed >= 0 );
-
-      int k = t.size()-1;
-      std::vector<double[3]> b(k+1);
-      Private::computeHelp2<G>( b, t, closed, k );
-
-      for(int i = 1+ed; i <= d; i++) {
-        int i1 = i-1;
-
-        for(int l = 1; l < k; l++)// ordinary diviedd differences
-          p[l][i] = b[l][0]*p[l-1][i1] + b[l][1]*p[l][i1]  + b[l][2]*p[l+1][i1];
-
-        if(closed)                // biting its own tail
-          p[0][i] = p[k][i] = b[0][0]*p[k-1][i1] + b[0][1]*p[0][i1]  + b[0][2]*p[1][i1];
-        else {                    // second degree endpoints divided differences
-          p[0][i] = b[0][0]*p[0][i1]   + b[0][1]*p[1][i1]   + b[0][2]*p[2][i1];
-          p[k][i] = b[k][0]*p[k-2][i1] + b[k][1]*p[k-1][i1] + b[k][2]*p[k][i1];
-        }
-      }
-    }
-
-
-
-
 
     template <typename T>
     inline
@@ -492,6 +410,7 @@ namespace GMlib {
           }
 
         if(closed_u) { // biting its own tail
+
           for(int l = 0; l < kv+1; ++l) { // data points u
             double scale = relationCK(p(ku-1)(l)(0)(0), p(0)(l)(0)(0), p(1)(l)(0)(0));
             p[0 ][l][i][0] = scale * (p[1][l][i1][0] - p[ku-1][l][i1][0]) / du2;
@@ -499,6 +418,7 @@ namespace GMlib {
           }
         }
         else { // second degree endpoints divided differences
+
           for(int l = 0; l < kv+1; ++l) { // data points u
             double scale = relationCK(p(0)(l)(0)(0), p(1)(l)(0)(0), p(2)(l)(0)(0));
             p[0 ][l][i][0] = scale * ( 4*p[1   ][l][i1][0] - 3*p[0 ][l][i1][0] - p[2   ][l][i1][0] ) / du2;
@@ -545,10 +465,6 @@ namespace GMlib {
     }
 
 
-
-
-
-
     template <typename T, int n>
     void compute( T& p, const Vector<int,n>& sizes, const Vector<double,n>& dt, const Vector<bool,n>& closed, const Vector<int,n>& d, const Vector<int,n>& ed ) {
 
@@ -557,7 +473,6 @@ namespace GMlib {
 
       Private::Static_For_Dim_<1,n>::compute(p,k,dt2,closed,d,ed);
     }
-
 
   } // end namespace DD
 }   // end namespace GMlib

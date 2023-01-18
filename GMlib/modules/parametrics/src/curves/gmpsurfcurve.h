@@ -48,8 +48,8 @@ namespace GMlib {
 
 
     void                togglePlot();
-     void               resample( DVector< DVector< Vector<T, 3> > >& p,
-                                      int m, int d, T start, T end ) override;
+    virtual void        resample( DVector< DVector< Vector<T, 3> > >& p,
+                                      int m, int d, T start, T end );
 
 
     //****************************************
@@ -61,7 +61,7 @@ namespace GMlib {
 
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;

@@ -1256,8 +1256,9 @@ namespace GMlib {
       for( int j = 0; j < _c.getDim2(); j++ ) {
 
         if( !_c[i][j]->getDefaultVisualizer() ) {
-           _c[i][j]->enableDefaultVisualizer(true);
-           _c[i][j]->replot( 10, 10, 1, 1 );
+
+          _c[i][j]->enableDefaultVisualizer(true);
+          _c[i][j]->replot( 10, 10, 1, 1 );
         }
 
         _c[i][j]->setVisible( true, -1 );
@@ -1437,6 +1438,16 @@ namespace GMlib {
 
     // Set surrounding sphere
     Parametrics<T,2,3>::setSurroundingSphere( s.template toType<float>() );
+
+
+
+
+
+
+
+
+
+
 
 
 

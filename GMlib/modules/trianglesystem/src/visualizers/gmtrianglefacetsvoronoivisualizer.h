@@ -38,7 +38,7 @@ namespace GMlib {
     TriangleFacetsVoronoiVisualizer();
     ~TriangleFacetsVoronoiVisualizer();
     void          display();
-    virtual void  replot() const;
+    virtual void  replot();
 
   protected:
     GLuint        _vbo;

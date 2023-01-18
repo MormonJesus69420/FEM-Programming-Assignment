@@ -28,7 +28,9 @@
 
 #include "../gmpcurve.h"
 
+
 namespace GMlib {
+
 
   template <typename T>
   class PButterfly : public PCurve<T,3> {
@@ -39,43 +41,22 @@ namespace GMlib {
 
     virtual ~PButterfly();
 
-    // Public local functions
-    void            setSize( T size );
-    T               getSize() const;
-
-    void            setFlaps( T flaps );
-    T               getFlaps() const;
-
-    void            setSimSpeed( T sim_speed );
-    T               getSimSpeed() const;
-
-    void            setSimBoundary( T sim_boundary );
-    T               getSimBoundary() const;
-
-
-
     //****************************************
     //****** Virtual public functions   ******
     //****************************************
 
     // from PCurve
-    bool          isClosed() const override;
+    bool                isClosed() const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
-    void          eval(T t, int d, bool l) const override;
-    T             getStartP() const override;
-    T             getEndP()   const override;
+    // Virtual function from PCurve that has to be implemented locally
+    void                eval(T t, int d, bool l) const override;
+    T                   getStartP() const override;
+    T                   getEndP()   const override;
 
 
     // Protected data for the curve
     T             _size;
-
-    T             _flaps;
-    T             _sim_speed;
-    T             _sim_boundary;
-
-    void          localSimulate(double dt) override;
 
   }; // END class PButterfly
 
@@ -83,6 +64,7 @@ namespace GMlib {
 
 // Include PButterfly class function implementations
 #include "gmpbutterfly.c"
+
 
 #endif // GM_PARAMETRICS_CURVES_PBUTTERFLY_H
 

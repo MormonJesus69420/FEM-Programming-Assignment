@@ -231,22 +231,22 @@ namespace GMlib { namespace GL {
         ));
   }
 
-  void Program::uniform(const std::string &name, const Point<int, 2> &p) const {
+  void Program::uniform(const std::string &name, const APoint<int, 2> &p) const {
 
     GL_CHECK(::glUniform2iv( getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::uniform(const std::string &name, const Point<float, 2> &p) const {
+  void Program::uniform(const std::string &name, const APoint<float, 2> &p) const {
 
     GL_CHECK(::glUniform2fv( getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::uniform(const std::string &name, const Point<float, 3> &p) const {
+  void Program::uniform(const std::string &name, const APoint<float, 3> &p) const {
 
     GL_CHECK(::glUniform3fv( getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::uniform(const std::string &name, const Point<float, 4> &p) const {
+  void Program::uniform(const std::string &name, const APoint<float, 4> &p) const {
 
     GL_CHECK(::glUniform4fv( getUniformLocation(name)(), 1, p.getPtr() ));
   }
@@ -312,28 +312,28 @@ namespace GMlib { namespace GL {
         ));
   }
 
-  void Program::programUniform(const std::string &name, const Point<int, 2> &p) const {
+  void Program::programUniform(const std::string &name, const APoint<int, 2> &p) const {
 
     GL_CHECK(::glProgramUniform2iv( getId(), getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::programUniform(const std::string &name, const Point<int, 3> &p) const {
+  void Program::programUniform(const std::string &name, const APoint<int, 3> &p) const {
 
     GL_CHECK(::glProgramUniform3iv( getId(), getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
 
-  void Program::programUniform(const std::string &name, const Point<float, 2> &p) const {
+  void Program::programUniform(const std::string &name, const APoint<float, 2> &p) const {
 
     GL_CHECK(::glProgramUniform2fv( getId(), getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::programUniform(const std::string &name, const Point<float, 3> &p) const {
+  void Program::programUniform(const std::string &name, const APoint<float, 3> &p) const {
 
     GL_CHECK(::glProgramUniform3fv( getId(), getUniformLocation(name)(), 1, p.getPtr() ));
   }
 
-  void Program::programUniform(const std::string &name, const Point<float, 4> &p) const {
+  void Program::programUniform(const std::string &name, const APoint<float, 4> &p) const {
 
     GL_CHECK(::glProgramUniform4fv( getId(), getUniformLocation(name)(), 1, p.getPtr() ));
   }

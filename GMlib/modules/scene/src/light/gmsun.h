@@ -52,7 +52,7 @@ namespace GMlib{
     Color                   getGlobalAmbient() const;
     const Vector<float,3>&  getDir() const;
     void                    scaleDayLight( double d );
-    void                    setDayLight( const Color& amb = Color( 1.0f, 1.0f, 1.0f ) );
+    void                    setDayLight( const Color& amb = Color( 1.0, 1.0, 1.0 ) );
 
   private:
     Vector<float,3>         _dir;

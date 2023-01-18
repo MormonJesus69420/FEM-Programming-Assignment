@@ -78,7 +78,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void PBezierTriangle<T>::eval( T u, T v, T w, int d ) const {
+  void PBezierTriangle<T>::eval( T u, T v, T w, int /*d*/ ) const {
 
     this->_p.setDim(4);
 
@@ -148,7 +148,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void PBezierTriangle<T>::showSelectors( bool grid, Color selector_color, Color grid_color ) {
+  void PBezierTriangle<T>::showSelectors( bool grid, Color selector_color, Color /*grid_color*/ ) {
 
     if( _selectors )
       return;
@@ -181,7 +181,7 @@ namespace GMlib {
 
     if( _c_moved ) {
 
-      HqMatrix<T,3> invmat = this->_matrix;
+      HqMatrix<T,3> invmat = this->_matrix.template toType<T>();
       invmat.invertOrthoNormal();
 
       Vector<T,3> diff = invmat * d;

@@ -91,7 +91,7 @@ namespace GMlib {
     void            computeProjectionMatrix() override {
 
       float  hh = _horizontal;
-      float  rr = getAspectRatio()*_horizontal;
+      float  rr = double(getAspectRatio())*_horizontal;
 
       float l, r, b, t, n, f;
       l = -rr;
@@ -136,8 +136,8 @@ namespace GMlib {
       Vector<float,3> oe = _matrix_scene*_up;
       Vector<float,3> ve = _matrix_scene*_side;
       _frustum_p[0] = _matrix_scene*_pos;
-      _frustum_p[1] = _frustum_p[0]+_frustum_far*f+_horizontal*(ratio*ve-oe);
-      _frustum_p[0] += _frustum_near*f-_horizontal*(ratio*ve-oe);
+      _frustum_p[1] = _frustum_p[0]+double(_frustum_far)*f+_horizontal*(double(ratio)*ve-oe);
+      _frustum_p[0] += double(_frustum_near)*f-_horizontal*(double(ratio)*ve-oe);
       _frustum_v[0] = ve;        // Venstre  (normal)
       _frustum_v[1] = -ve;        // Høyre  (normal)
       _frustum_v[2] = oe;        // Opp    (normal)
@@ -155,9 +155,9 @@ namespace GMlib {
       Point<float,3>  p2(0,0,-_frustum_far);
 
       Vector<float,3> v1(0,_horizontal,0);
-      Vector<float,3> v2(-ratio*_horizontal,0,0);
+      Vector<float,3> v2(-double(ratio)*_horizontal,0,0);
       Vector<float,3> v3(0,_horizontal,0);
-      Vector<float,3> v4(-ratio*_horizontal,0,0);
+      Vector<float,3> v4(-double(ratio)*_horizontal,0,0);
 
 
       Point<float,3>  p1m(p1-v1);

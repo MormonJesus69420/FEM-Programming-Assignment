@@ -63,13 +63,11 @@ namespace GMlib {
     DVector( int i, T val );
     DVector( int i, const T p[] );
     DVector( const DVector<T>& v );
-    DVector( T* p, int n, int i );
    ~DVector();
 
     void                  append(T val, int i=1);
     void                  append(const DVector<T>& v);
     void                  clear(T v = T(0));
-
     int                   getDim() const;
     T                     getLength() const;
     T*                    getPtr() const;
@@ -77,7 +75,6 @@ namespace GMlib {
     const DVector<T>&     getSubVector(int start, int end) const;
     const T&              getSum() const;
     const T&              getSum(int start, int end) const;
-
     void                  increaseDim(int i, T val=T(0), bool at_end=true);
     void                  insert( int i, const T& val );
     void                  prepend(T val, int i=1);
@@ -88,7 +85,6 @@ namespace GMlib {
     void                  push_front(const DVector<T>& v);
     void                  resetDim(int i);
     void                  setDim(int i);
-
     const Array<T>&       toArray() const;
 
     bool             operator<(const DVector<T>& m) const;
@@ -114,15 +110,9 @@ namespace GMlib {
     const T&         operator[](int i) const;
     const T&         operator()(int i) const;
 
-    T&               front();
-    const T&         front() const;
-    T&               back();
-    const T&         back() const;
-
   private:
-    bool            _private;
     int             _n;
-    T*              _p;
+    T              *_p;
     T               _init[4];
 
     void            _cpy( const DVector<T>& v );

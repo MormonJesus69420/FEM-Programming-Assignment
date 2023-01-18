@@ -41,7 +41,6 @@ namespace GMlib {
 
     _p = (i>4 ? new T[i]:_init);
     _n = i;
-    _private = true;
   }
 
 
@@ -57,7 +56,6 @@ namespace GMlib {
     _p = (i>4 ? new T[i]:_init);
     _n = i;
     clear(val);
-    _private = true;
   }
 
 
@@ -68,7 +66,6 @@ namespace GMlib {
     _p = (i>4 ? new T[i]:_init);
     _n = i;
     _cpy( p );
-    _private = true;
   }
 
 
@@ -77,24 +74,13 @@ namespace GMlib {
   DVector<T>::DVector(const DVector<T>& v) {
     _n = 0; _p = _init;
     _cpy(v);
-    _private = true;
-  }
-
-
-  template<typename T>
-  inline
-  DVector<T>::DVector( T* p, int n, int i ) {
-
-    _p = p + i;
-    _n = n;
-    _private = false;
   }
 
 
   template<typename T>
   inline
   DVector<T>::~DVector() {
-    if(_p != _init && _private) delete [] _p;
+    if(_p != _init) delete [] _p;
   }
 
 
@@ -176,7 +162,7 @@ namespace GMlib {
   template <typename T>
   inline
   T DVector<T>::getLength() const {
-    T r = T(0);
+    T r=T(0);
     for(int i=0; i<_n; i++) r += (*this)(i)*(*this)(i);
     return sqrt(r);
   }
@@ -458,67 +444,6 @@ namespace GMlib {
   }
 
 
-  /*! T&  DVector<T>::front()
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  template <typename T>
-  inline
-  T&  DVector<T>::front()  {
-  #ifdef DEBUG
-    if (_n==0) std::cerr << "Error index, there is no elements in the vector\n";
-  #endif
-    return _p[0];
-  }
-
-
-  /*! const T&  DVector<T>::front() const
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  template <typename T>
-  inline
-  const T&  DVector<T>::front() const {
-  #ifdef DEBUG
-    if (_n==0) std::cerr << "Error index, there is no elements in the vector\n";
-  #endif
-    return _p[0];
-  }
-
-
-  /*! T&  DVector<T>::back()
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  template <typename T>
-  inline
-  T&  DVector<T>::back()  {
-  #ifdef DEBUG
-    if (_n==0) std::cerr << "Error index, there is no elements in the vector\n";
-  #endif
-    return _p[_n-1];
-  }
-
-
-  /*! const T&  DVector<T>::back() const
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  template <typename T>
-  inline
-  const T&  DVector<T>::back() const {
-  #ifdef DEBUG
-    if (_n==0) std::cerr << "Error index, there is no elements in the vector\n";
-  #endif
-    return _p[_n-1];
-  }
-
-
-
   /*! bool DVector<T>::operator < (const DVector<T>& v) const
    *  \brief Pending Documentation
    *
@@ -543,15 +468,16 @@ namespace GMlib {
     if (_n != v.getDim())
       std::cerr << "Vector dimension error, dim=" << _n << " ,dim=" << v._getDim() << std::endl;
   #endif
-    if(_n==0) {
-      //This ensures that an empty DVector stil can be += with another DVector.
-      //This is usefull with the * and ^ operators which utilize lokal variables that are empty.
-      //In other words this makes posible a DVector<DVector<T> >.
+    if(_n==0)
+    {//This ensures that an empty DVector stil can be += with another DVector.
+     //This is usefull with the * and ^ operators which utilize lokal variables that are empty.
+     //In other words this makes posible a DVector<DVector<T> > .
       _cpy(v);
     }
     else
+    {
       for (int i=0; i <_n; i++) _p[i] += v._p[i];
-
+    }
     return *this;
   }
 
@@ -684,11 +610,14 @@ namespace GMlib {
   template <typename T>
   void DVector<T>::insert(int index, const T& val)  {
 
-    // Increase dimention and "move"
+//    std::cout << "  DVector::insert: index = " << index << ", val = " << val << std::endl;
+    // Increase dim and "move"
     increaseDim(1);
-    for( int i=_n-1; i > index; --i ) _p[i]=_p[i-1];
+    for( int i = _n-1; i > index; -- i ) _p[i] = _p[i-1];
 
     // Set new value
     _p[index] = val;
+
   }
+
 }

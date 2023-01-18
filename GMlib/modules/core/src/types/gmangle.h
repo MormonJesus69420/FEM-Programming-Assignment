@@ -1,7 +1,7 @@
 /**********************************************************************************
 **
-** Copyright (C) 1994 - 2017 University of Tromsø - The Arctic University of Norway
-** Contact: GMlib Online Portal at https://source.uit.no/gmlib/gmlib/wikis/home
+** Copyright (C) 1994 Narvik University College
+** Contact: GMlib Online Portal at http://episteme.hin.no
 **
 ** This file is part of the Geometric Modeling Library, GMlib.
 **
@@ -29,7 +29,6 @@
 
 // stl
 #include <cmath>
-
 
 
 namespace GMlib {

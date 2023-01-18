@@ -798,7 +798,7 @@ namespace GMlib {
   }
 
   template <typename T>
-  void TriangleFacets<T>::replot() const {
+  void TriangleFacets<T>::replot() {
     Sphere<float,3> s( getVertex(0)->getPos() );
     for( int j = 1; j < this->getSize(); j++ )
       s+= getVertex(j)->getPos();
@@ -806,7 +806,7 @@ namespace GMlib {
 
     // Replot Visaulizers
     for( int i = 0; i < this->_tf_visualizers.getSize(); i++ )
-      _tf_visualizers(i)->replot(this);
+      this->_tf_visualizers[i]->replot( this );
   }
 
  // #endif

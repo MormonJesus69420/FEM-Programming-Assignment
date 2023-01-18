@@ -54,17 +54,17 @@ namespace GMlib {
   template <typename T, int n>
   class GM_Static_ {
   public:
-    static T	  dpr(const T *a, const T *b);                    // a*b innerproduct
-    static T	  dprm(const T *a, const T *b);                   // -a*b innerproduct
+    static T	  dpr(const T *a, const T *b);                      // a*b innerproduct
+    static T	  dprm(const T *a, const T *b);                     // -a*b innerproduct
 
     static void   eq(T *a, const T& b);                           // a =  b  set equal
-    static void   eqm(T *a, const T* b);	                      // a = -b
+    static void   eqm(T *a, const T* b);	                        // a = -b
 
     static void   sc(T *a, double b);                             // a *= b  scale
     static void   sc_r(T *a, const T *b, double c);               // a = b*c scale
 
-    static void   peq(T *a, const T *b);	                      // a += b
-    static void   meq(T *a, const T *b);	                      // a -= b
+    static void   peq(T *a, const T *b);	                        // a += b
+    static void   meq(T *a, const T *b);	                        // a -= b
     static void   xeq(T *a, const T* b);                          // a %= b
 
     static void   eq_p(T *a, const T* b, const T*c);              // a = b + c
@@ -85,8 +85,8 @@ namespace GMlib {
   template <typename T>
   class GM_Static_<T, 1> {
   public:
-    static T	  dpr(const T *a, const T *b);                    // a*b innerproduct
-    static T	  dprm(const T *a, const T *b);			          // a*b innerproduct
+    static T	    dpr(const T *a, const T *b);                    // a*b innerproduct
+    static T	    dprm(const T *a, const T *b);			              // a*b innerproduct
 
     static void   eq(T *a, const T& b);                           // a =  b  set equal
     static void   eqm(T *a, const T* b);                          // a = -b
@@ -114,97 +114,6 @@ namespace GMlib {
 
 
 
-  /*! \class  GM_Static_u_ gmstaticproc.h <gmStaticProc>
-   *  \brief  For Point and Vectors with strides ( 1 dimentional)
-   *
-   *  For Point and Vectors with strides( 1 dimentional)
-   */
-  template <typename T, int n, int u>
-  class GM_Static_u_ {
-  public:
-    static void   eq(T *a, const T& b);                           // a =  b  set equal
-    static void   sc(T *a, double b);                             // a *= b  scale
-  }; // END class GM_Static_u_<T, n, u>
-
-
-  template <typename T, int u>    /*This is a terminator */
-  class GM_Static_u_<T, 1, u> {
-  public:
-    static void   eq(T *a, const T& b);                           // a =  b  set equal
-    static void   sc(T *a, double b);                             // a *= b  scale a with b
-  }; // END class GM_Static_u_<T, 1, u> "Terminator"
-
-
-
-
-  /*! \class  GM_Static_uv_ gmstaticproc.h <gmStaticProc>
-   *  \brief  For Point and Vectors with strides ( 1 dimentional)
-   *
-   *  For Point and Vectors with strides( 1 dimentional)
-   */
-  template <typename T, int n, int u, int v>
-  class GM_Static_uv_ {
-  public:
-    static T	  dpr(const T *a, const T *b);                    // a*b innerproduct
-    static T	  dprm(const T *a, const T *b);                   // -a*b innerproduct
-
-    static void   eq(T *a, const T* b);                           // a =  b  set equal
-    static void   eqm(T *a, const T* b);	                      // a = -b
-    static void   sc_r(T *a, const T *b, double c);               // a = b*c scale
-
-    static void   peq(T *a, const T *b);	                      // a += b
-    static void   meq(T *a, const T *b);	                      // a -= b
-    static void   xeq(T *a, const T* b);                          // a %= b
-
-    static void   rot_xy(T *a, T *b, const T& sa, const T& ca);
-
-    static void   decomp(T *a, const T *b, const T& c);           // a -= c*b
-  }; // END class GM_Static_uv_<T, n, u, v>
-
-
-  template <typename T, int u, int v>    /*This is a terminator */
-  class GM_Static_uv_<T, 1, u, v> {
-  public:
-    static T	  dpr(const T *a, const T *b);                    // a*b innerproduct
-    static T	  dprm(const T *a, const T *b);			          // a*b innerproduct
-
-    static void   eq(T *a, const T* b);                           // a =  b  set equal
-    static void   eqm(T *a, const T* b);                          // a = -b
-    static void   sc_r(T *a, const T *b, double c);               // a = b*c scale b with c and put into a
-
-    static void   peq(T *a, const T *b);                          // a += b
-    static void   meq(T *a, const T *b);                          // a -= b
-    static void   xeq(T *a, const T* b);                          // a %= b
-
-    static void   rot_xy(T *a, T *b, const T& sa, const T& ca);
-
-    static void   decomp(T *a, const T *b, const T& c);           // a -= c*b
-  }; // END class GM_Static_uv_<T, 1, u, v> "Terminator"
-
-
-
-
-  /*! \class  GM_Static_uvw_ gmstaticproc.h <gmStaticProc>
-   *  \brief  For Point and Vectors with strides ( 1 dimentional)
-   *
-   *  For Point and Vectors with strides( 1 dimentional)
-   */
-  template <typename T, int n, int u, int v, int w>
-  class GM_Static_uvw_ {
-  public:
-    static void   eq_p(T *a, const T* b, const T*c);              // a = b + c
-    static void   eq_m(T *a, const T* b, const T*c);              // a = b - c
-    static void   eq_x(T *a, const T* b, const T*c);              // a = b % c
-  }; // END class GM_Static_uv_<T, n, u, v, w>
-
-
-  template <typename T, int u, int v, int w>    /*This is a terminator */
-  class GM_Static_uvw_<T, 1, u, v, w> {
-  public:
-    static void   eq_p(T *a, const T* b, const T*c);              // a = b + c
-    static void   eq_m(T *a, const T* b, const T*c);              // a = b - c
-    static void   eq_x(T *a, const T* b, const T*c);              // a = b % c
-  }; // END class GM_Static_uv_<T, 1, u, v, w> "Terminator"
 
 
 
@@ -280,6 +189,7 @@ namespace GMlib {
 
     static void decomp1(T *a, const T* b, T& c);
   }; // END class GM_Static2_<T, 1, m> "Terminator"
+
 
 
 
@@ -698,7 +608,6 @@ namespace GMlib {
 
 
 
-
   ////////////////////////////////////
   // template <typename T, typename G>
   // class GM_Static1_<T, G, 1>::
@@ -774,6 +683,9 @@ namespace GMlib {
     GM_Static_<T,m>::decomp(a,b,c);
     GM_Static2_<T,n-1,m>::decomp1(a,b+m,c);
   }
+
+
+
 
 
 
@@ -1044,328 +956,6 @@ namespace GMlib {
   void GM_Std_<T, 1>::b_min_d_c(T *a, const T* b, const T* c, const T& d) {
     (*a) = (*b) - d*(*c);
   }
-
-
-
-
-//**************************************************************************************//
-
-
-
-  ///////////////////////////////
-  // template <typename T, int n, int u>
-  // class GM_Static_uv_ {
-
-  /*! \brief  Innerproduct of &lt;a,b&gt;
-   *
-   * \tparam T Affine point/vector type
-   * \tparam n Dimension
-   * \tparam u Stride for 1st vector
-   * \tparam v Stride for 2nd vector
-   *
-   *  \param[in] a point/vector
-   *  \param[in] b point/vector
-   *  \result
-   */
-
-  /*! \brief  a = b  set equal */
-  template <typename T, int n, int u>
-  inline
-  void GM_Static_u_<T,n,u>::eq(T *a, const T& b) {
-    (*a) = b;
-    GM_Static_u_<T,n-1,u>::eq(a+u,b);
-  }
-
-
-  /*! \brief  a *= b  scale */
-  template <typename T, int n, int u>
-  inline
-  void GM_Static_u_<T,n,u>::sc(T *a, double b) {
-    (*a) *= b;
-    GM_Static_u_<T,n-1,u>::sc(a+u,b);
-  }
-
-
-
-
-  /*! \brief  a =  b  set equal */
-  template <typename T, int u>
-  inline
-  void GM_Static_u_<T,1,u>::eq(T *a, const T& b) {
-    (*a) = b;
-  }
-
-
-
-  /*! \brief  a *= b;  scale a with b */
-  template <typename T, int u>
-  inline
-  void GM_Static_u_<T,1,u>::sc(T *a, double b) {
-    (*a) *= b;
-  }
-
-
-
-
-
-  ///////////////////////////////
-  // template <typename T, int n, int u, int v>
-  // class GM_Static_uv_ {
-
-  /*! \brief  Innerproduct of &lt;a,b&gt;
-   *
-   * \tparam T Affine point/vector type
-   * \tparam n Dimension
-   * \tparam u Stride for 1st vector
-   * \tparam v Stride for 2nd vector
-   *
-   *  \param[in] a point/vector
-   *  \param[in] b point/vector
-   *  \result Innerproduct or ...
-   */
-  template <typename T, int n, int u, int v>
-  inline
-  T	GM_Static_uv_<T,n,u,v>::dpr(const T *a, const T *b) {
-    return (*a) * (*b) + GM_Static_uv_<T,n-1,u,v>::dpr(a+u,b+v);
-  }
-
-
-  /*! \brief  -a*b innerproduct */
-  template <typename T, int n, int u, int v>
-  inline
-  T	GM_Static_uv_<T,n,u,v>::dprm(const T *a, const T *b) {
-    return -(*a) * (*b) + GM_Static_uv_<T,n-1,u,v>::dprm(a+u,b+v);
-  }
-
-
-  /*! \brief  a = -b */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::eq(T *a, const T* b) {
-    (*a) = (*b);
-    GM_Static_uv_<T,n-1,u,v>::eq(a+u,b+v);
-  }
-
-
-  /*! \brief  a = -b */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::eqm(T *a, const T* b) {
-    (*a) = -(*b);
-    GM_Static_uv_<T,n-1,u,v>::eqm(a+u,b+v);
-  }
-
-
-  /*! \brief  a = b*c scale */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::sc_r(T *a, const T *b, double c)	{
-    (*a) = (*b)*c;
-    GM_Static_uv_<T,n-1,u,v>::sc_r(a+u,b+v,c);
-  }
-
-  /*! \brief  a += b */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::peq(T *a, const T *b) {
-    (*a) += (*b);
-    GM_Static_uv_<T,n-1,u,v>::peq(a+u,b+v);
-  }
-
-  /*! \brief  a -= b */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::meq(T *a, const T *b) {
-    (*a) -= (*b);
-    GM_Static_uv_<T,n-1,u,v>::meq(a+u,b+v);
-  }
-
-  /*! \brief  a %= b */
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::xeq(T *a, const T* b) {
-    (*a) *= (*b);
-    GM_Static_uv_<T,n-1,u,v>::xeq(a+u,b+v);
-  }
-
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::rot_xy(T *a, T *b, const T& sa, const T& ca) {
-    T tmp=(*b)*sa+(*a)*ca;
-    (*b)=(*b)*ca-(*a)*sa;
-    (*a)=tmp;
-    GM_Static_uv_<T,n-1,u,v>::rot_xy(a+u,b+v,sa,ca);
-  }
-
-  template <typename T, int n, int u, int v>
-  inline
-  void GM_Static_uv_<T,n,u,v>::decomp(T *a, const T *b, const T& c)	{
-    (*a) -= c * (*b);
-    GM_Static_uv_<T,n-1,u,v>::decomp(a+u,b+v,c);
-  }
-
-
-
-
-  ///////////////////////////////
-  // template <typename T, n, int u, int v, int w>
-  // class GM_Static_uvw_ {
-
-
-
-  /*! \brief  a = b + c */
-  template <typename T, int n, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,n,u,v,w>::eq_p(T *a, const T* b, const T*c) {
-    (*a)=(*b)+(*c);
-    GM_Static_uvw_<T,n-1,u,v,w>::eq_p(a+u,b+v,c+w);
-  }
-
-  /*! \brief  a = b - c */
-  template <typename T, int n, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,n,u,v,w>::eq_m(T *a, const T* b, const T*c) {
-    (*a)=(*b)-(*c);
-    GM_Static_uvw_<T,n-1,u,v,w>::eq_m(a+u,b+v,c+w);
-  }
-
-  /*! \brief  a = b % c */
-  template <typename T, int n, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,n,u,v,w>::eq_x(T *a, const T* b, const T*c) {
-    (*a)=(*b)*(*c);
-    GM_Static_uvw_<T,n-1,u,v,w>::eq_x(a+u,b+v,c+w);
-  }
-
-
-
-
-
-
-
-  ///////////////////////////////
-  // template <typename T, 1, int u, int v>
-  // class GM_Static_uv_ {
-
-
-
-  /*! \brief a*b innerproduct */
-  template <typename T, int u, int v>
-  inline
-  T GM_Static_uv_<T,1,u,v>::dpr(const T *a, const T *b) {
-    return (*a) * (*b);
-  }
-
-
-  /*! \brief  a*b innerproduct */
-  template <typename T, int u, int v>
-  inline
-  T GM_Static_uv_<T,1,u,v>::dprm(const T *a, const T *b) {
-    return -(*a) * (*b);
-  }
-
-
-
-  /*! \brief  a = -b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::eq(T *a, const T* b) {
-    (*a) = (*b);
-  }
-
-
-  /*! \brief  a = -b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::eqm(T *a, const T* b) {
-    (*a) = -(*b);
-  }
-
-
-  /*! \brief  a = b*c; scale b with c and put into a */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::sc_r(T *a, const T *b, double c)	{
-    (*a) = (*b)*c;
-  }
-
-
-  /*! \brief  a += b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::peq(T *a, const T *b) {
-    (*a) += (*b);
-  }
-
-
-  /*! \brief  a -= b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::meq(T *a, const T *b) {
-    (*a) -= (*b);
-  }
-
-
-  /*! \brief  a %= b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::xeq(T *a, const T* b) {
-    (*a) *= (*b);
-  }
-
-
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::rot_xy(T *a, T *b, const T& sa, const T& ca) {
-    T tmp=(*b)*sa+(*a)*ca;
-    (*b)=(*b)*ca-(*a)*sa;
-    (*a)=tmp;
-  }
-
-
-  /*! \brief  a -= c*b */
-  template <typename T, int u, int v>
-  inline
-  void GM_Static_uv_<T,1,u,v>::decomp(T *a, const T *b, const T& c)	{
-    (*a) -= c * (*b);
-  }
-
-
-
-
-
-  ///////////////////////////////
-  // template <typename T, 1, int u, int v, int w>
-  // class GM_Static_uvw_ {
-
-
-
-
-  /*! \brief  a = b + c */
-  template <typename T, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,1,u,v,w>::eq_p(T *a, const T* b, const T*c) {
-    (*a)=(*b)+(*c);
-  }
-
-
-  /*! \brief  a = b - c */
-  template <typename T, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,1,u,v,w>::eq_m(T *a, const T* b, const T*c) {
-    (*a)=(*b)-(*c);
-  }
-
-
-  /*! \brief  a = b % c */
-  template <typename T, int u, int v, int w>
-  inline
-  void GM_Static_uvw_<T,1,u,v,w>::eq_x(T *a, const T* b, const T*c) {
-    (*a)=(*b)*(*c);
-  }
-
-
-
 
 
 } //END namespace GMlib

@@ -145,25 +145,25 @@ namespace GMlib {
   void PointLight::calculateRadius(float constant, float linear, float quadratic) {
 
     double aa, solution;
-    if (GMutils::compValueF(linear,0.0f) && GMutils::compValueF(quadratic,0.0f))
+    if (GMutils::compValueF(linear,0.0f) and GMutils::compValueF(quadratic,0.0f))
     {
       setCullable(false); // Disable culling
-      solution = FLT_MAX;
+      solution = double(FLT_MAX);
     }
     else if (GMutils::compValueF(quadratic,0.0f))
     {
       if(constant <= _min_light_contribution)
-        solution = (_min_light_contribution-constant) / linear;
+        solution = double(_min_light_contribution-constant) / double(linear);
       else
         solution = 0;
     }
     else
     {
       if(constant <= _min_light_contribution)
-        aa= sqrt(linear*linear + 4 * (_min_light_contribution-constant) * quadratic);
+        aa= sqrt(double(linear)*double(linear) + 4.0 * double(_min_light_contribution-constant) * double(quadratic));
       else
-        aa = linear;
-      solution = (aa -linear)/(2 * quadratic);
+        aa = double(linear);
+      solution = (aa -double(linear))/(2.0 * double(quadratic));
     }
     _light_sphere.resetValue(solution);
   }

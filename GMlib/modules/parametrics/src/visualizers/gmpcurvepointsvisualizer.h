@@ -43,25 +43,22 @@ namespace GMlib {
   class PCurvePointsVisualizer : public PCurveVisualizer<T,n> {
     GM_VISUALIZER(PCurvePointsVisualizer)
   public:
-    PCurvePointsVisualizer(float size = 2);
-    PCurvePointsVisualizer(std::vector<DVector<Vector<T,3>>>& p);
-    PCurvePointsVisualizer( const PCurvePointsVisualizer<T,n>& copy );
+    PCurvePointsVisualizer();
     virtual ~PCurvePointsVisualizer();
 
+    void              render(const SceneObject* obj, const DefaultRenderer* render) const;
     const Color&      getColor() const;
-    void              setColor( const Color& color );
-
     float             getSize() const;
+    void              setColor( const Color& color );
     void              setSize( float size );
 
-    void              render(const SceneObject* obj, const DefaultRenderer* render) const override;
-    void              renderGeometry( const SceneObject* obj, const Renderer* render, const Color& color ) const override;
 
-    void              replot( const std::vector< DVector< Vector<T, n> > >& p, int m, int d, bool closed = false ) override;
-    void              update() override;
+    void              replot( const DVector< DVector< Vector<T, n> > >& p,
+                              int m, int d, bool closed );
 
   protected:
     GL::Program               _prog;
+
     GL::VertexBufferObject    _vbo;
     int                       _no_vertices;
 

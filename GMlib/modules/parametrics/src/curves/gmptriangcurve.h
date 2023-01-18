@@ -51,15 +51,11 @@ namespace GMlib {
 
     void          togglePlot();
 
-    void  resample( DVector< DVector< Vector<T, 3> > >& p, int m, int d, T start, T end ) override;
+    virtual void  resample( DVector< DVector< Vector<T, 3> > >& p, int m, int d, T start, T end ) override;
 
     DVector<DVector<Vector<T,3> > >& getSample3(int m);
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
-    void                eval(T t, int d, bool l) const override;
-    T                   getStartP() const override;
-    T                   getEndP()   const override;
 
     PTriangle<T,3>*             _s;
 
@@ -74,6 +70,10 @@ namespace GMlib {
 
     mutable
     ERBSEvaluator<long double>  _basis;
+
+    void	     eval( T t, int d = 0, bool l = false ) const override;
+    T          getEndP() const override;
+    T          getStartP() const override;
 
     private:
 

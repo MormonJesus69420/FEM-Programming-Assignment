@@ -23,4 +23,4 @@
 
 #GM_ADD_TESTS(array)
 GM_ADD_TESTS(dvectorn)
-GM_ADD_TESTS(staticproc)
+GM_ADD_TESTS(staticproc_compiletest)

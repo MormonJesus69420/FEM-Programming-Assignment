@@ -269,6 +269,10 @@ void DefaultHidManager::heReplotQuick(int factor) {
 //          1 );
 //      else
 //        curve->replot( std::pow<int>( factor, 2 ) * 100, 2 );
+      if( erbs )
+        erbs->replot();
+      else
+        curve->replot();
     }
     else if( surf ) {
 

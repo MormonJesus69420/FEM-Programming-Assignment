@@ -1,7 +1,7 @@
 /**********************************************************************************
 **
-** Copyright (C) 1994 - 2017 University of Tromsø - The Arctic University of Norway
-** Contact: GMlib Online Portal at https://source.uit.no/gmlib/gmlib/wikis/home
+** Copyright (C) 1994 Narvik University College
+** Contact: GMlib Online Portal at http://episteme.hin.no
 **
 ** This file is part of the Geometric Modeling Library, GMlib.
 **
@@ -85,10 +85,8 @@ class Cube;
   protected:
     Matrix<T,m,n>         _matrix;
 
+
   }; // END class SubSpace
-
-
-
 
   template <typename T, int n>
   class SubSpace<T,n,0> : public Point<T,n> {
@@ -106,6 +104,7 @@ class Cube;
     Point<T,n> const&   getPosC() const;
 
   }; // END class SubSpace<t,n,0> "Terminator"
+
 
 
 
@@ -139,6 +138,10 @@ class Cube;
 
 
 
+
+
+
+
   /*! \class  Plane gmsubspace.h <gmSubSpace>
    *  \brief  The Static Plane class
    *
@@ -160,9 +163,6 @@ class Cube;
 
   };
 
-
-
-
   template <class T>
   class Plane<T,3> : public SubSpace<T,3,2> {
   public:
@@ -180,6 +180,12 @@ class Cube;
     Vector<T,3>         getDistanceVector(const Point<T,3>& p) const;
     T                   getDistanceTo(const Point<T,3>& p) const;
   }; // END class Plane
+
+
+
+
+
+
 
 
 
@@ -212,9 +218,8 @@ class Cube;
 
 
 
-  // ****************************************************
+  // *******************************************
   // SubSpace operators for SubSpace multiplication
-  // ****************************************************
 
   template <class T, int n, int m, int k>
   inline
@@ -238,9 +243,8 @@ class Cube;
 
   #ifdef GM_STREAM
 
-  // ************************************************
-  // Stream operators for std-stream, Qt-stream, etc.
-  // ************************************************
+    // ************************************************
+    // Stream operators for std-stream, Qt-stream, etc.
 
     /*!
      *  \brief
@@ -261,7 +265,7 @@ class Cube;
     inline
     T_Stream& operator<<( T_Stream& out, const SubSpace<T,n,m>* s ) {
 
-      out << s->getPos() << GMseparator::group() << s->getMat();
+      out << static_cast<Point<T,n>*>(s) << GMseparator::group() << s->getMat();
       return out;
     }
 
@@ -304,11 +308,12 @@ class Cube;
 
   #endif
 
-} // END namespace GMlib
+} // END namespace
 
 
 // Include implementations
 #include "gmsubspace.c"
+
 
 
 #endif // GM_CORE_TYPES_SUBSPACE_H

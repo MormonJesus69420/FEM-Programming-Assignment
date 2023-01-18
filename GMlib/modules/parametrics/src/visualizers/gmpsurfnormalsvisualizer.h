@@ -55,7 +55,7 @@ namespace GMlib {
 
     void                              render( const SceneObject* obj, const DefaultRenderer* renderer) const override;
     void                              replot( const DMatrix< DMatrix< Vector<T, n> > >& p,
-                                              const DMatrix< Vector<float, n> >& normals,
+                                              const DMatrix< Vector<T, n> >& normals,
                                               int m1, int m2, int d1, int d2,
                                               bool closed_u, bool closed_v
                                               ) override;
@@ -80,9 +80,9 @@ namespace GMlib {
 
     GM_SURF_NORMALSVISUALIZER_MODE    _mode;
 
-    void                              makePlotAll( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<float, 3> >& normals );
-    void                              makePlotInterior( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<float, 3> >& normals );
-    void                              makePlotBoundary( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<float, 3> >& normals );
+    void                              makePlotAll( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<T, 3> >& normals );
+    void                              makePlotInterior( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<T, 3> >& normals );
+    void                              makePlotBoundary( const DMatrix< DMatrix< Vector<T, 3> > >& p, const DMatrix< Vector<T, 3> >& normals );
 
 
   };

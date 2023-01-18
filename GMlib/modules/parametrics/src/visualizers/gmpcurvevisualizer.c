@@ -22,6 +22,7 @@
 
 
 
+
 #include "gmpcurvevisualizer.h"
 
 // gmlib
@@ -30,53 +31,40 @@
 namespace GMlib {
 
   template <typename T, int n>
-  PCurveVisualizer<T,n>::PCurveVisualizer(): _p(nullptr) {}
-
-  template <typename T, int n>
-  PCurveVisualizer<T,n>::PCurveVisualizer(std::vector<DVector<Vector<T,3>>>& p): _p(&p) {}
-
-  template <typename T, int n>
-  PCurveVisualizer<T,n>::PCurveVisualizer(const PCurveVisualizer<T,n>& copy): Visualizer(copy), _p(copy._p) {}
+  PCurveVisualizer<T,n>::PCurveVisualizer() {}
 
   template <typename T, int n>
   PCurveVisualizer<T,n>::~PCurveVisualizer() {}
 
   template <typename T, int n>
   void PCurveVisualizer<T,n>::fillStandardVBO( GL::VertexBufferObject &vbo,
-                                               const std::vector< DVector< Vector<T, n>>>& p,
-                                               int d,
-                                               bool scale,
-                                               const Vector<T,n>& s) {
+                                               const DVector< DVector< Vector<T, n> > >& p,
+                                               int& no_vertices,
+                                               int d) {
 
-    GLsizeiptr buffer_size = p.size() * sizeof(GL::GLVertex);
+    no_vertices = p.getDim();
+    GLsizeiptr buffer_size = no_vertices * sizeof(GL::GLVertex);
 
     vbo.bufferData( buffer_size, 0x0, GL_STATIC_DRAW );
 
     GL::GLVertex *ptr = vbo.mapBuffer<GL::GLVertex>();
     if( ptr ) {
-        if(scale) {
-            for( unsigned int i = 0; i < p.size(); i++ ) {
-                ptr->x = (GLfloat)(s(0) * p[i](d)(0));
-                ptr->y = (GLfloat)(s(1) * p[i](d)(1));
-                ptr->z = (GLfloat)(s(2) * p[i](d)(2));
-                ptr++;
-            }
-        }
-        else
-        {
-            for( unsigned int i = 0; i < p.size(); i++ ) {
-                ptr->x = (GLfloat)p[i](d)(0);
-                ptr->y = (GLfloat)p[i](d)(1);
-                ptr->z = (GLfloat)p[i](d)(2);
-                ptr++;
-            }
-        }
+      for( int i = 0; i < p.getDim(); i++ ) {
+
+        ptr->x = p(i)(d)(0);
+        ptr->y = p(i)(d)(1);
+        ptr->z = p(i)(d)(2);
+        ptr++;
+      }
     }
     vbo.unmapBuffer();
   }
 
   template <typename T, int n>
-  void PCurveVisualizer<T,n>::replot( const std::vector< DVector< Vector<T, n> > >& /*p*/,
+  inline
+  void PCurveVisualizer<T,n>::replot( const DVector< DVector< Vector<T, n> > >& /*p*/,
                                       int /*m*/, int /*d*/, bool /*closed*/ ) {}
+
+
 
 } // END namespace GMlib

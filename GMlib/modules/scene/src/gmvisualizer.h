@@ -70,47 +70,21 @@ namespace GMlib {
     virtual void              render( const SceneObject*, const DefaultRenderer* ) const {}
     virtual void              renderGeometry( const SceneObject*, const Renderer*, const Color& ) const {}
 
-    // For the system to call when data in an object is changed, NB!! not affine transformation
-    virtual void              update();
-
     DISPLAY_MODE              getDisplayMode() const;
     void                      setDisplayMode( DISPLAY_MODE display_mode );
     void                      toggleDisplayMode();
+
     void                      glSetDisplayMode() const;
 
+    virtual void              simulate( double dt );
 
     virtual bool              operator == ( const Visualizer* v ) const;
 
-
-    virtual void              simulate( double dt );
-  protected:
 
   private:
     DISPLAY_MODE              _display_mode;
   };
 
-
-
-
-
-  inline
-  Visualizer::Visualizer() : _display_mode(DISPLAY_MODE_SHADED) {}
-
-
-  inline
-  Visualizer::Visualizer( const Visualizer& copy ) : _display_mode(copy._display_mode) {}
-
-
-  inline
-  Visualizer::DISPLAY_MODE Visualizer::getDisplayMode() const {
-    return _display_mode;
-  }
-
-
-  inline
-  void Visualizer::setDisplayMode( Visualizer::DISPLAY_MODE display_mode) {
-    _display_mode = display_mode;
-  }
 
 
 } // END namespace GMlib

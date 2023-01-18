@@ -123,9 +123,7 @@ namespace GMlib{
     void                        removeSelections();
     void                        clearSelection();
 
-    void                        getEditedObjects(Array<const SceneObject*>& e_obj) const;
     void                        setEventManager( EventManager* mgr );
-
 
     SceneObject*                operator [] (int i);
     SceneObject*                operator () (int i);

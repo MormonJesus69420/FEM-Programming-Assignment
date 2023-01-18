@@ -1,7 +1,7 @@
 /**********************************************************************************
 **
-** Copyright (C) 1994 - 2017 University of Tromsø - The Arctic University of Norway
-** Contact: GMlib Online Portal at https://source.uit.no/gmlib/gmlib/wikis/home
+** Copyright (C) 1994 Narvik University College
+** Contact: GMlib Online Portal at http://episteme.hin.no
 **
 ** This file is part of the Geometric Modeling Library, GMlib.
 **
@@ -36,8 +36,6 @@ namespace GMlib {
   M_I_<T,n,m>	Matrix<T,n,m>::_I;
 
 
-
-
   /*! const Vector<T,n>& Matrix<T,n,m>::col(int j)const
    *  \brief  col
    *
@@ -50,8 +48,6 @@ namespace GMlib {
 
     GM_Static2_<T,n,m>::eq1(_c.getPtr(),getPtr()+j); return _c;
   }
-
-
 
 
   /*! const Vector<T,m>& Matrix<T,n,m>::row(int i)const
@@ -68,8 +64,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void Matrix<T,n,m>::cpy()
    *  \brief  cpy
    *
@@ -82,8 +76,6 @@ namespace GMlib {
 
     memcpy(getPtr(),_I.getPtr(),sizeof(Matrix<T,n,m>));
   }
-
-
 
 
   /*! void Matrix<T,n,m>::cpy(const T* v)
@@ -100,8 +92,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void Matrix<T,n,m>::cpy(const Vector<Vector<T,m>,n>& v)
    *  \brief  cpy
    *
@@ -114,8 +104,6 @@ namespace GMlib {
 
     memcpy(getPtr(), v.getPtr(),sizeof(Matrix<T,n,m>));
   }
-
-
 
 
   /*! void Matrix<T,n,m>::cpy_t(const T* v)
@@ -132,8 +120,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void Matrix<T,n,m>::cpy_t(const Vector<Vector<T,n>,m>& v)
    *  \brief  cpy
    *
@@ -148,9 +134,7 @@ namespace GMlib {
   }
 
 
-
-
-  /*! void Matrix<T,n,m>::cpy_r(const Point<T,m>& p,int i)
+  /*!void Matrix<T,n,m>::cpy_r(const APoint<T,m>& p,int i)
    *  \brief  cpy
    *
    *  Detailed description of
@@ -158,15 +142,13 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  void Matrix<T,n,m>::cpy_r(const Point<T,m>& p,int i) {
+  void Matrix<T,n,m>::cpy_r(const APoint<T,m>& p,int i) {
 
     (*this)[i] = p;
   }
 
 
-
-
-  /*! void Matrix<T,n,m>::cpy_c(const Point<T,n>& p,int j)
+  /*! void Matrix<T,n,m>::cpy_c(const APoint<T,n>& p,int j)
    *  \brief  cpy
    *
    *  Detailed description of
@@ -174,11 +156,10 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  void Matrix<T,n,m>::cpy_c(const Point<T,n>& p,int j) {
+  void Matrix<T,n,m>::cpy_c(const APoint<T,n>& p,int j) {
 
     GM_Static2_<T,n,m>::eq2(p.getPtr(),getPtr()+j);
   }
-
 
 
 
@@ -195,8 +176,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>::Matrix(bool i)
    *  \brief  The fast constructor
    *
@@ -208,9 +187,7 @@ namespace GMlib {
   }
 
 
-
-
-  /*! Matrix<T,n,m>::Matrix(const Point<T,m>& r,const Point<T,n>& c)
+  /*! Matrix<T,n,m>::Matrix(const APoint<T,m>& r,const APoint<T,n>& c)
    *  \brief constructor
    *
    *  The tensor (outer) product constructor
@@ -219,12 +196,10 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  Matrix<T,n,m>::Matrix(const Point<T,m>& r,const Point<T,n>& c) {
+  Matrix<T,n,m>::Matrix(const APoint<T,m>& r,const APoint<T,n>& c) {
 
     GM_Static_P_<T,n,m>::vv_ox(getPtrP(), &r, c.getPtr());
   }
-
-
 
 
   /*! Matrix<T,n,m>::Matrix(const Vector<T,m>& u)
@@ -242,8 +217,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>::Matrix(const Vector<T,m>& u)
    *  \brief constructor
    *
@@ -259,8 +232,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>::Matrix(const Vector<T,m>& u)
    *  \brief The copy constructor
    *
@@ -272,8 +243,6 @@ namespace GMlib {
 
     cpy(v);
   }
-
-
 
 
   /*! Matrix<T,n,m>::Matrix(const Vector<T,m>& u)
@@ -289,8 +258,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>::Matrix(const Vector<T,m>& u)
    *  \brief The transpose constructor
    *
@@ -304,8 +271,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void Matrix<T,n,m>::reset()
    *  \brief Reset to "I-matrix"
    *
@@ -315,10 +280,9 @@ namespace GMlib {
   template <typename T, int n, int m>
   inline
   void Matrix<T,n,m>::reset() {
+
     cpy();
   }
-
-
 
 
   /*! \brief Gives a T* pointer
@@ -331,9 +295,6 @@ namespace GMlib {
     return reinterpret_cast<T*>(this);
   }
 
-
-
-
   /*! \brief Gives a const T* pointer
    *  The matrix can be treated as a classic n*m-dim array of T
    */
@@ -344,37 +305,29 @@ namespace GMlib {
     return reinterpret_cast<const T*>(this);
   }
 
-
-
-
-  /*! \brief Gives a Point<T,m>* pointer into the matrix
+  /*! \brief Gives a APoint<T,m>* pointer into the matrix
    *
    *  The matrix can be treated as a classic n-dim of
-   *  Point<T,n> *
+   *  APoint<T,n> *
    */
   template <typename T, int n, int m>
   inline
-  Point<T,m>* Matrix<T,n,m>::getPtrP() {
+  APoint<T,m>* Matrix<T,n,m>::getPtrP() {
 
-    return reinterpret_cast<Point<T,m>*>(this);
+    return reinterpret_cast<APoint<T,m>*>(this);
   }
 
-
-
-
-  /*! \brief Gives a Point<T,m>* const-pointer into the matrix
+  /*! \brief Gives a APoint<T,m>* const-pointer into the matrix
    *
    *  The matrix can be treated as a classic n-dim of
-   *  Point<T,n> *
+   *  APoint<T,n> *
    */
   template <typename T, int n, int m>
   inline
-  const Point<T,m>* Matrix<T,n,m>::getPtrP() const	{
+  const APoint<T,m>* Matrix<T,n,m>::getPtrP() const	{
 
-    return reinterpret_cast<const Point<T,m>*>(this);
+    return reinterpret_cast<const APoint<T,m>*>(this);
   }
-
-
 
 
   /*! Matrix<T,n,m>&	Matrix<T,n,m>::operator=(const Vector<Vector<T,m>,n>& m)
@@ -389,8 +342,6 @@ namespace GMlib {
 
     cpy(mat);   return(*this);
   }
-
-
 
 
   /*! Matrix<T,n,m>&	Matrix<T,n,m>::setTransposed(const Vector<Vector<T,m>,n>& m)
@@ -408,8 +359,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>	Matrix<T,n,m>::transposed() const
    *  \brief Makes a transposed copy
    *
@@ -425,8 +374,7 @@ namespace GMlib {
 
 
 
-
-  /*! void Matrix<T,n,m>::setCol(const Point<T,n>& c, int i)
+  /*! void Matrix<T,n,m>::setCol(const APoint<T,n>& c, int i)
    *  \brief  setCol
    *
    *  Put vector c at column number i
@@ -434,15 +382,13 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  void Matrix<T,n,m>::setCol(const Point<T,n>& c, int i) {
+  void Matrix<T,n,m>::setCol(const APoint<T,n>& c, int i) {
 
     cpy_c(c,i);
   }
 
 
-
-
-  /*! void Matrix<T,n,m>::setRow(const Point<T,m>& r, int j)
+  /*! void Matrix<T,n,m>::setRow(const APoint<T,m>& r, int j)
    *  \brief  setRow
    *
    *  Put vector r at row number j
@@ -450,11 +396,10 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  void Matrix<T,n,m>::setRow(const Point<T,m>& r, int j) {
+  void Matrix<T,n,m>::setRow(const APoint<T,m>& r, int j) {
 
     cpy_r(r,j);
   }
-
 
 
 
@@ -491,7 +436,6 @@ namespace GMlib {
 
 
 
-
   /*! void Matrix<T,n,m>::initRow(int i, int j)
    *  \brief  getCol
    *
@@ -501,15 +445,14 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  Point<T,n>const& Matrix<T,n,m>::getCol(int i) const	{
+  APoint<T,n>const& Matrix<T,n,m>::getCol(int i) const	{
 
     return getStatCol(i);
   }
 
 
 
-
-  /*! Point<T,m>const& Matrix<T,n,m>::getRow(int j) const
+  /*! APoint<T,m>const& Matrix<T,n,m>::getRow(int j) const
    *  \brief  getRow
    *
    *  Returns Row number j
@@ -518,15 +461,14 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  Point<T,m>const& Matrix<T,n,m>::getRow(int j) const	{
+  APoint<T,m>const& Matrix<T,n,m>::getRow(int j) const	{
 
     return getStatRow(j);
   }
 
 
 
-
-  /*! void Matrix<T,n,m>::scale(const Point<T,n>& s)
+  /*! void Matrix<T,n,m>::scale(const APoint<T,n>& s)
    *  \brief  scale
    *
    *  Scaling the matrix row by row
@@ -534,7 +476,7 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  void Matrix<T,n,m>::scale(const Point<T,n>& s) {
+  void Matrix<T,n,m>::scale(const APoint<T,n>& s) {
 
     GM_Static_P_<T,n,m>::sc(getPtrP(),s.getPtr());
   }
@@ -543,7 +485,7 @@ namespace GMlib {
 
 
   /*! Matrix<T,n,m>& Matrix<T,n,m>::operator+=(const Matrix<T,n,m>& m)
-   *  \brief
+   *  \brief  scale
    *
    *  K = T += M
    *  This matrix (T) is updated by summing with matrix M, it is also
@@ -560,8 +502,9 @@ namespace GMlib {
 
 
 
+
   /*! Matrix<T,n,m>& Matrix<T,n,m>::operator-=(const Matrix<T,n,m>& m)
-   *  \brief
+   *  \brief  scale
    *
    *  K = T -= M
    *  This matrix (T) is updated by subtract with matrix M, it is also
@@ -577,9 +520,8 @@ namespace GMlib {
 
 
 
-
-  /*! Matrix<T,n,m> Matrix<T,n,m>::operator+(const Matrix<T,n,m>& mat) const
-   *  \brief
+  /*! void Matrix<T,n,m>::scale(const APoint<T,n>& s)
+   *  \brief  scale
    *
    *  K = T + M
    *  Summing this matrix (T) and matrix M, this matrix is not changed. It is
@@ -594,9 +536,8 @@ namespace GMlib {
 
 
 
-
   /*! Matrix<T,n,m>& Matrix<T,n,m>::operator-(const Matrix<T,n,m>& m) const
-   *  \brief
+   *  \brief  scale
    *
    *  K = T - M
    *	Subtract matrix M from this matrix (T), this matrix is not changed. It is
@@ -608,7 +549,6 @@ namespace GMlib {
 
     return static_cast< Matrix<T,n,m> >(Vector<Vector<T,m>,n>::operator -(mat));
   }
-
 
 
 
@@ -628,8 +568,7 @@ namespace GMlib {
 
 
 
-
-  /*! Point<T,n>&  Matrix<T,n,m>::operator*(const Point<T,m>& v) const
+  /*! APoint<T,n>&  Matrix<T,n,m>::operator*(const APoint<T,m>& v) const
    *  \brief  operator *
    *
    *  p =  T * q
@@ -638,11 +577,10 @@ namespace GMlib {
    */
   template <typename T, int n, int m>
   inline
-  const Point<T,n>&  Matrix<T,n,m>::operator*(const Point<T,m>& v) const {
+  const APoint<T,n>&  Matrix<T,n,m>::operator*(const APoint<T,m>& v) const {
 
     GM_Static_P_<T,n,m>::mv_x(_c.getPtr(),getPtrP(),v); return _c;
   }
-
 
 
 
@@ -661,13 +599,11 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,m>& Matrix<T,n,m>::operator*(const double d) const
    *  \brief  operator *
    *
-   *	K = S * d
-   *  Returns a scaled matrix, K = S * d. NB, this matrix (S) is not scaled.
+   *	K = T * d
+   *  Returns a scaled matrix, K = T * d. NB, this matrix (T) is not scaled.
    */
   template <typename T, int n, int m>
   inline
@@ -675,7 +611,6 @@ namespace GMlib {
 
     return static_cast< Matrix<T,n,m> >(Vector<Vector<T,m>,n>::operator *(d));
   }
-
 
 
 
@@ -695,7 +630,6 @@ namespace GMlib {
 
 
 
-
   /*! Matrix<T,n,m>& Matrix<T,n,m>::operator/(double d) const
    *  \brief  operator /
    *
@@ -710,8 +644,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! bool Matrix<T,n,m>::operator < ( const Matrix<T,n,m>& )
    *
    *  Dummy comparison operator for Array
@@ -722,8 +654,6 @@ namespace GMlib {
 
     return true;
   }
-
-
 
 
   /*! void Matrix<T,n,m>::swap(int i,int j)
@@ -741,7 +671,6 @@ namespace GMlib {
 
 
 
-
   /*! void Matrix<T,n,m>::swap(int i,int j,int a,int b)
    *  \brief  swap
    *
@@ -755,6 +684,9 @@ namespace GMlib {
 
     T tmp = (*this)[i][j]; (*this)[i][j] = (*this)[a][b]; (*this)[a][b] = tmp;
   }
+
+
+
 
 
 
@@ -776,8 +708,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,m,m> Matrix<T,n,m>::getTransMult()
    *  \brief Matrix member multiplication: (*this)T * (*this)
    *
@@ -793,8 +723,6 @@ namespace GMlib {
     GM_Static_P2_<T,m,n,m>::mm_xTT(r.getPtrP(),getPtr(),getPtr());
     return r;
   }
-
-
 
 
   /*! void Matrix<T,n,m>::setOrtho(const Vector<T,m>& u)
@@ -827,8 +755,6 @@ namespace GMlib {
       (*this)[i].normalize();
     }
   }
-
-
 
 
   /*! void Matrix<T,n,m>::makeMeOrtho(const Vector<T,m>& u, const Vector<T,m>& v)
@@ -873,8 +799,6 @@ namespace GMlib {
   }
 
 
-
-
   template <class T, int n, int m>
   template <typename G>
   Matrix<T,n,m>::operator Matrix<G,n,m> () const {
@@ -883,18 +807,13 @@ namespace GMlib {
     return v;
   }
 
-
-
-
   template <class T, int n, int m>
   template <typename G>
   Matrix<G,n,m> Matrix<T,n,m>::toType() const {
-    Matrix<G,n,m> v;
-    GM_Static1_<G,T,n*m>::eq( v.getPtr(), getPtr() );
-    return v;
+    Matrix<G,n,m> mat;
+    mat = *this;
+    return mat;
   }
-
-
 
 
   /*! SqMatrix<T, n>::nSqMatrix(): Matrix<T,n,n>()
@@ -919,19 +838,15 @@ namespace GMlib {
   }
 
 
-
-
-  /*! SqMatrix<T, n>::SqMatrix(const Point<T,n>& r, const Point<T,n>& c): Matrix<T,n,n>(r,c)
+  /*! SqMatrix<T, n>::SqMatrix(const APoint<T,n>& r, const APoint<T,n>& c): Matrix<T,n,n>(r,c)
    *  \brief The tensor (outer) product constructor
    *
    *  The constructer gives an tensor (outer) product of the two vectors that is the parameters
    */
   template <typename T, int n>
   inline
-  SqMatrix<T, n>::SqMatrix(const Point<T,n>& r, const Point<T,n>& c): Matrix<T,n,n>(r,c) {
+  SqMatrix<T, n>::SqMatrix(const APoint<T,n>& r, const APoint<T,n>& c): Matrix<T,n,n>(r,c) {
   }
-
-
 
 
   /*! SqMatrix<T, n>::SqMatrix(const Vector<Vector<T,n>,n>& m): Matrix<T,n,n>(m)
@@ -945,8 +860,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! SqMatrix<T, n>::SqMatrix(const Vector<Vector<T,n>,n>& m, bool trans): Matrix<T,n,n>(m,trans)
    *  \brief The transpose copy constructor
    *
@@ -956,8 +869,6 @@ namespace GMlib {
   inline
   SqMatrix<T, n>::SqMatrix(const Vector<Vector<T,n>,n>& m, bool trans): Matrix<T,n,n>(m,trans) {
   }
-
-
 
 
   /*! SqMatrix<T, n>::SqMatrix(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
@@ -979,8 +890,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! SqMatrix<T, n>::SqMatrix(const T* m, bool trans): Matrix<T,n,n>(m,trans)
    *  \brief The rotation constructor
    *
@@ -992,8 +901,6 @@ namespace GMlib {
   template <typename T, int n>
   inline
   SqMatrix<T, n>::SqMatrix(const T* m, bool trans): Matrix<T,n,n>(m,trans) {}
-
-
 
 
   /*! SqMatrix<T, n>::SqMatrix(Angle a, int x = 0, int y=1)
@@ -1011,8 +918,6 @@ namespace GMlib {
     T sina = T(sin(a.getRad())), cosa = T(cos(a.getRad()));
     (*this)[x][x]=cosa; (*this)[y][x]=-sina; (*this)[x][y]=sina; (*this)[y][y]=cosa;
   }
-
-
 
 
   template <typename T, int n>
@@ -1037,8 +942,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! Matrix<T,n,n> const& SqMatrix<T, n>::reverseMult(const Matrix<T,n,n>& m)
    *  \brief Mutiplicate matrix m to this matrix in reverce order : (*this) = m * (*this)
    *
@@ -1052,22 +955,17 @@ namespace GMlib {
     return *this = r;
   }
 
-
-
-
   template <typename T, int n>
   inline
-  void SqMatrix<T, n>::setDiagonal(const Point<T,n>& r) {
+  void SqMatrix<T, n>::setDiagonal(const APoint<T,n>& r) {
     cpy_d(r);
   }
 
   template <typename T, int n>
   inline
-  Point<T,n> const&  SqMatrix<T, n>::getDiagonal(int i) const	{
+  APoint<T,n> const&  SqMatrix<T, n>::getDiagonal(int i) const	{
     return getStatDiagonal(i);
   }
-
-
 
 
   /*! void SqMatrix<T, n>::invert()
@@ -1151,8 +1049,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void SqMatrix<T, n>::invert2()
    *  \brief Pending Documentation
    *
@@ -1177,8 +1073,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void SqMatrix<T, n>::rotation(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
@@ -1193,8 +1087,6 @@ namespace GMlib {
     rotateXY(a);
     basisChange(x);
   }
-
-
 
 
   /*! void SqMatrix<T, n>::basisChange(const Matrix<T,n,n>& x)
@@ -1222,40 +1114,35 @@ namespace GMlib {
 
 
 
-
   // **************************
   // Protected Member Functions
 
 
-  /*! const Point<T,n>& SqMatrix<T, n>::getStatDiagonal(int i) const
+  /*! const APoint<T,n>& SqMatrix<T, n>::getStatDiagonal(int i) const
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
   template <typename T, int n>
   inline
-  const Point<T,n>& SqMatrix<T, n>::getStatDiagonal(int /*i*/) const {
+  const APoint<T,n>& SqMatrix<T, n>::getStatDiagonal(int /*i*/) const {
 
       GM_Static3_<T,n,n>::eq1( this->_c.getPtr(), this->getPtr() );
       return this->_c;
   }
 
 
-
-
-  /*! void  SqMatrix<T, n>::cpy_d(const Point<T,n>& p)
+  /*! void  SqMatrix<T, n>::cpy_d(const APoint<T,n>& p)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
   template <typename T, int n>
   inline
-  void  SqMatrix<T, n>::cpy_d(const Point<T,n>& p) {
+  void  SqMatrix<T, n>::cpy_d(const APoint<T,n>& p) {
 
     GM_Static3_<T,n,n>::eq2( p.getPtr(), this->getPtr() );
   }
-
-
 
 
   /*! void SqMatrix<T, n>::makeOrtho(const Vector<T,n>& u, const Vector<T,n>& v, Matrix<T,n,n>& x)
@@ -1295,8 +1182,6 @@ namespace GMlib {
   }
 
 
-
-
   template <typename T, int n>
   template <typename G>
   SqMatrix<T,n>::operator SqMatrix<G,n> () const {
@@ -1308,79 +1193,47 @@ namespace GMlib {
 
 
 
-//***********************************************************
-//              HqMatrix                            *********
-//***********************************************************
-
-
-  /*! HqMatrix<T, n>::HqMatrix():SqMatrix<T,n+1>()
+  /*! HqMatrix_<T, n>::HqMatrix_():SqMatrix<T,n+1>()
    *  \brief The default constructor
    *
    *  The constructer gives an I-matrix
    */
-#define Hq_constr1(n) inline\
-  HqMatrix<T, n>::HqMatrix():SqMatrix<T,n+1>() {}
-
   template <typename T, int n>
-  Hq_constr1(n)
-
-  template <typename T>
-  Hq_constr1(3)
+  inline
+  HqMatrix_<T, n>::HqMatrix_():SqMatrix<T,n+1>() {}
 
 
-
-
-  /*! HqMatrix<T, n>::HqMatrix(bool i):SqMatrix<T,n+1>(i)
+  /*! HqMatrix_<T, n>::HqMatrix_(bool i):SqMatrix<T,n+1>(i)
    *  \brief The fast constructor
    *
    *  The constructer gives random contents, there will be no initializing
    */
-#define Hq_constr2(n) inline\
-  HqMatrix<T, n>::HqMatrix(bool i):SqMatrix<T,n+1>(i) {}
-
   template <typename T, int n>
-  Hq_constr2(n)
-
-  template <typename T>
-  Hq_constr2(3)
+  inline
+  HqMatrix_<T, n>::HqMatrix_(bool i):SqMatrix<T,n+1>(i) {}
 
 
-
-
-  /*! HqMatrix<T, n>::HqMatrix(const Matrix<T,n+1,n+1>& v):SqMatrix<T,n+1>(v)
+  /*! HqMatrix_<T, n>::HqMatrix_(const Matrix<T,n+1,n+1>& v):SqMatrix<T,n+1>(v)
    *  \brief The copy constructor
    *
    *  The constructer gives a copy of the input (homogenious) matrix
    */
-#define Hq_constr3(n) inline\
-  HqMatrix<T, n>::HqMatrix(const Matrix<T,n+1,n+1>& v):SqMatrix<T,n+1>(v)	{}
-
   template <typename T, int n>
-  Hq_constr3(n)
-
-  template <typename T>
-  Hq_constr3(3)
+  inline
+  HqMatrix_<T, n>::HqMatrix_(const Matrix<T,n+1,n+1>& v):SqMatrix<T,n+1>(v)	{}
 
 
-
-
-  /*! HqMatrix<T, n>::HqMatrix(const Matrix<T,n+1,n+1>& v, bool trans):SqMatrix<T,n+1>(v,trans)
+  /*! HqMatrix_<T, n>::HqMatrix_(const Matrix<T,n+1,n+1>& v, bool trans):SqMatrix<T,n+1>(v,trans)
    *  \brief The transpose copy constructor
    *
    *  The constructer gives a transposed copy of the input (homogenious) matrix if "trans" is true.
    */
-#define Hq_constr4(n) inline\
-  HqMatrix<T, n>::HqMatrix(const Matrix<T,n+1,n+1>& v, bool trans):SqMatrix<T,n+1>(v,trans)	{}
-
   template <typename T, int n>
-  Hq_constr4(n)
-
-  template <typename T>
-  Hq_constr4(3)
+  inline
+  HqMatrix_<T, n>::HqMatrix_(const Matrix<T,n+1,n+1>& v, bool trans):SqMatrix<T,n+1>(v,trans)	{}
 
 
-
-  /*! HqMatrix<T, n>::HqMatrix(const Matrix<T,n,n>& v, bool trans=false):SqMatrix<T,n+1>(false)
+  /*! HqMatrix_<T, n>::HqMatrix_(const Matrix<T,n,n>& v, bool trans=false):SqMatrix<T,n+1>(false)
    *  \brief The  copy or transpose copy constructor from a sub matrix.
    *
    *  The constructer gives a copy (or transposed copy if "trans" is true) of the
@@ -1388,39 +1241,24 @@ namespace GMlib {
    *  The rightmost and lowermost vectors are set to 0 exept
    *  for the right lower corner value that is 1.
    */
-#define Hq_constr5(n) inline\
-  HqMatrix<T, n>::HqMatrix( const Matrix<T,n,n>& v, bool trans) : SqMatrix<T,n+1>(v,trans)	{}
-
   template <typename T, int n>
-  Hq_constr5(n)
-
-  template <typename T>
-  Hq_constr5(3)
+  inline
+  HqMatrix_<T, n>::HqMatrix_( const Matrix<T,n,n>& v, bool trans) : SqMatrix<T,n+1>(v,trans)	{}
 
 
-
-
-
-  /*! HqMatrix<T, n>::HqMatrix(const Vector<T,n>& d)
+  /*! HqMatrix_<T, n>::HqMatrix_(const Vector<T,n>& d)
    *  \brief The translation constructor
    *
    *  The constructer gives an homogenious translation matrix.
    */
-#define Hq_constr6(n) inline\
-    HqMatrix<T, n>::HqMatrix( const Vector<T,n>& d  ){\
-      GM_Static2_<T,n,n+1>::eq2( d.getPtr(), this->getPtr()+n );\
-    }
-
   template <typename T, int n>
-  Hq_constr6(n)
+  inline
+  HqMatrix_<T, n>::HqMatrix_( const Vector<T,n>& d  ){
 
-  template <typename T>
-  Hq_constr6(3)
+    GM_Static2_<T,n,n+1>::eq2( d.getPtr(), this->getPtr()+n );
+  }
 
-
-
-
-  /*! HqMatrix<T, n>::HqMatrix(Angle a,  int x, int y)
+  /*! HqMatrix_<T, n>::HqMatrix_(Angle a,  int x, int y)
    *  \brief The clean rotation constructor
    *
    *  The constructer gives a clean rotation matrix rotating in one
@@ -1428,276 +1266,176 @@ namespace GMlib {
    *  i.e. the default (0,1) - is the xy-plane. Remark the for example (0,1) and (1,0)
    *  is rotation in opposit direction.
    */
-#define Hq_constr7(n) inline\
-    HqMatrix<T, n>::HqMatrix(Angle a,  int x, int y){\
-      T sina = T(sin(a.getRad())), cosa = T(cos(a.getRad()));\
-      (*this)[x][x]=cosa; (*this)[y][x]=-sina; (*this)[x][y]=sina; (*this)[y][y]=cosa;\
-    }
-
   template <typename T, int n>
-  Hq_constr7(n)
+  inline
+  HqMatrix_<T, n>::HqMatrix_(Angle a,  int x, int y){
 
-  template <typename T>
-  Hq_constr7(3)
+    T sina = T(sin(a.getRad())), cosa = T(cos(a.getRad()));
+    (*this)[x][x]=cosa; (*this)[y][x]=-sina; (*this)[x][y]=sina; (*this)[y][y]=cosa;
+  }
 
 
-
-
-  /*! HqMatrix<T, n>::HqMatrix(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
+  /*! HqMatrix_<T, n>::HqMatrix_(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
    *  \brief The clean general rotation constructor
    *
    *  The constructer gives a rotation matrix rotating in the plane
    *  spanned by the two vectors u and v, but located in origin.
    */
-#define Hq_constr8(n) inline\
-    HqMatrix<T, n>::HqMatrix(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){\
-        makeOrtho(u, v, *this);\
-        Matrix<T,n+1,n+1> x(*this);\
-        rotateXY(a);\
-        this->basisChange(x);\
-      }
-
   template <typename T, int n>
-  Hq_constr8(n)
+  inline
+HqMatrix_<T, n>::HqMatrix_(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){
+    makeOrtho(u, v, *this);
+    Matrix<T,n+1,n+1> x(*this);
+    rotateXY(a);
+    this->basisChange(x);
+  }
 
-  template <typename T>
-  Hq_constr8(3)
 
-
-
-
-  /*! HqMatrix<T, n>::HqMatrix(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p)
+  /*! HqMatrix_<T, n>::HqMatrix_(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p)
    *  \brief The general rotation constructor
    *
    *  The constructer gives a rotation matrix rotating in the plane
    *  spanned by the two vectors u and v and that is located in the point p.
    */
-#define Hq_constr9(n) inline\
-    HqMatrix<T, n>::HqMatrix(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p) {\
-      Vector<T,n> r;\
-      T sina = sin(a.getRad());\
-      T cosa = cos(a.getRad());\
-      makeOrtho(u, v, *this);\
-      SqMatrix<T,n+1> x(*this);\
-      GM_Static_<T,n>::rot_xy( this->getPtr(), this->getPtr()+(n+1), sina, cosa);\
-      this->basisChange(x);\
-      T x0 = GM_Static_<T,n>::dpr(p.getPtr(),x.getPtr());\
-      T x1 = GM_Static_<T,n>::dpr(p.getPtr(),x[1].getPtr());\
-      r[0] = (x0*cosa-x1*sina);\
-      r[1] = (x0*sina+x1*cosa);\
-      GM_Static_P_<T,n-2,n>::hq_2x(r.getPtr()+2,x[2].getPtr(),p);\
-      GM_Static_P_<T,n,n>::hq_3x(this->getPtr()+n,x.getPtr(),r,p.getPtr());\
-    }
+  template <typename T, int n>
+  inline
+  HqMatrix_<T, n>::HqMatrix_(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p) {
+
+    Vector<T,n> r;
+    T sina = sin(a.getRad());
+    T cosa = cos(a.getRad());
+    makeOrtho(u, v, *this);
+    SqMatrix<T,n+1> x(*this);
+    GM_Static_<T,n>::rot_xy( this->getPtr(), this->getPtr()+(n+1), sina, cosa);
+    this->basisChange(x);
+
+    T x0 = GM_Static_<T,n>::dpr(p.getPtr(),x.getPtr());
+    T x1 = GM_Static_<T,n>::dpr(p.getPtr(),x[1].getPtr());
+    r[0] = (x0*cosa-x1*sina);
+    r[1] = (x0*sina+x1*cosa);
+    GM_Static_P_<T,n-2,n>::hq_2x(r.getPtr()+2,x[2].getPtr(),p);
+    GM_Static_P_<T,n,n>::hq_3x(this->getPtr()+n,x.getPtr(),r,p.getPtr());
+  }
+
+
+
+
 
   template <typename T, int n>
-  Hq_constr9(n)
-
-  template <typename T>
-  Hq_constr9(3)
-
-
-
-
-
-#define Hq_set_transp(n) inline\
-    Matrix<T,n+1,n+1>& HqMatrix<T, n>::setTranspose(const Matrix<T,n+1,n+1>& v) {\
-      cpy_t(v); return(*this);\
-    }
-
-  template <typename T, int n>
-  Hq_set_transp(n)
-
-  template <typename T>
-  Hq_set_transp(3)
+  inline
+  Matrix<T,n+1,n+1>& HqMatrix_<T, n>::setTranspose(const Matrix<T,n+1,n+1>& v) {
+    cpy_t(v); return(*this);
+  }
 
 
 
 
-  /*! void HqMatrix<T, n>::rotateXY(Angle a, int x=0, int y=1)
+
+  /*! void HqMatrix_<T, n>::rotateXY(Angle a, int x=0, int y=1)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,x,y)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,x,y)* (*this)
    */
-#define Hq_rotateXY(n) inline\
-    void HqMatrix<T, n>::rotateXY(Angle a, int x , int y ) {\
-      GM_Static_<T,n>::rot_xy(this->getPtr()+x*(n+1),this->getPtr()+y*(n+1), T(sin(a.getRad())), T(cos(a.getRad())));\
-    }
-
   template <typename T, int n>
-  Hq_rotateXY(n)
+  inline
+  void HqMatrix_<T, n>::rotateXY(Angle a, int x , int y ) {
 
-  template <typename T>
-  Hq_rotateXY(3)
+    GM_Static_<T,n>::rot_xy(this->getPtr()+x*(n+1),this->getPtr()+y*(n+1), T(sin(a.getRad())), T(cos(a.getRad())));
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
+  /*! void HqMatrix_<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_rotate1(n) inline\
-    void HqMatrix<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){\
-      HqMatrix<T,n> x(a,u,v);\
-      *this = *this * x;\
-    }
-
   template <typename T, int n>
-  Hq_rotate1(n)
+  inline
+  void HqMatrix_<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){
+    HqMatrix_<T,n> x(a,u,v);
+    *this = *this * x;
+  }
 
-  template <typename T>
-  Hq_rotate1(3)
 
 
 
-
-  /*! HqMatrix<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p)
+  /*! HqMatrix_<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_rotate2(n) inline\
-    void HqMatrix<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p){\
-      HqMatrix<T,n> x(a,u,v,p);\
-      *this = *this * x;\
-    }
-
   template <typename T, int n>
-  Hq_rotate2(n)
+  inline
+  void HqMatrix_<T, n>::rotate(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p){
+    HqMatrix_<T,n> x(a,u,v,p);
+    *this = *this * x;
+  }
 
-  template <typename T>
-  Hq_rotate2(3)
 
-
-
-
-  /*! void HqMatrix<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
+  /*! void HqMatrix_<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_rotateGlobal(n) inline\
-    void HqMatrix<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){\
-      HqMatrix<T,n> x(a,u,v);\
-      this->reverseMult( x );\
-    }
-
   template <typename T, int n>
-  Hq_rotateGlobal(n)
+  inline
+  void HqMatrix_<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v){
+    HqMatrix_<T,n> x(a,u,v);
+    this->reverseMult( x );
+  }
 
-  template <typename T>
-  Hq_rotateGlobal(3)
 
-
-
-
-  /*! HqMatrix<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p)
+  /*! HqMatrix_<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_rotateGlobal2(n) inline\
-    void HqMatrix<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const Point<T,n>& p){\
-      HqMatrix<T,n> x(a,u,v,p);\
-      this->reverseMult( x );\
-    }
-
   template <typename T, int n>
-  Hq_rotateGlobal2(n)
-
-  template <typename T>
-  Hq_rotateGlobal2(3)
-
-
-
+  inline
+  void HqMatrix_<T, n>::rotateGlobal(Angle a, const Vector<T,n>& u, const Vector<T,n>& v, const APoint<T,n>& p){
+    HqMatrix_<T,n> x(a,u,v,p);
+    this->reverseMult( x );
+  }
 
 
-  /*! void Matrix<T,n,m>::scale(const Point<T,n>& s)
-   *  \brief  scale
-   *
-   *  Scaling the matrix row by row
-   *  Row number i is scaled with s[i].
-   */
-#define Hq_scale(n) inline\
-    void HqMatrix<T,n>::scale(const Point<T,n>& s) {\
-      GM_Static_P_<T,n,n+1>::sc(this->getPtrP(),s.getPtr());\
-    }
-
-  template <typename T, int n>
-  Hq_scale(n)
-
-  template <typename T>
-  Hq_scale(3)
-
-
-
-
-
-
-  /*! void HqMatrix<T, n>::translate(const Vector<T,n> d)
+  /*! void HqMatrix_<T, n>::translate(const Vector<T,n> d)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_translate(n) inline\
-    void HqMatrix<T, n>::translate(const Vector<T,n> d) {\
-      HqMatrix<T,n> m(d);\
-      (*this) = (*this)*m;\
-    }
-
   template <typename T, int n>
-  Hq_translate(n)
+  inline
+  void HqMatrix_<T, n>::translate(const Vector<T,n> d) {
 
-  template <typename T>
-  Hq_translate(3)
+    HqMatrix_<T,n> m(d);
+    (*this) = (*this)*m;
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::translateGlobal(const Vector<T,n> d)
+  /*! void HqMatrix_<T, n>::translateGlobal(const Vector<T,n> d)
    *  \brief Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    *
    *  Add a rotation to this matrix: (*this) = SqMatrix<T,n>(a,u,v)* (*this)
    */
-#define Hq_translateGlobal(n) inline\
-    void HqMatrix<T, n>::translateGlobal(const Vector<T,n> d) {\
-      HqMatrix<T,n> m(d);\
-      this->reverseMult( m );\
-    }
+  template <typename T, int n>
+  inline
+  void HqMatrix_<T, n>::translateGlobal(const Vector<T,n> d) {
+
+    HqMatrix_<T,n> m(d);
+    this->reverseMult( m );
+  }
 
   template <typename T, int n>
-  Hq_translateGlobal(n)
+  inline
+  const Matrix<T,n,n>& HqMatrix_<T,n>::getRotationMatrix() const {
 
-  template <typename T>
-  Hq_translateGlobal(3)
+    static Matrix<T,n,n> rot;
+    for( int i = 0; i < 3; ++i )
+      rot[i] = (*this)(i);
+    return rot;
+  }
 
-
-
-
-  /*! const Matrix<T,n,n>& HqMatrix<T, n>::translateGlobal(const Vector<T,n> d)
-   *  \brief Get a clean rotation matrix: SqMatrix<T,n> sq = this->getRotationMatrix()
-   *
-   *  Get a clean rotation matrix: SqMatrix<T,n> sq = this->getRotationMatrix()
-   */
-#define Hq_getRotationMatrix(n) inline\
-    const Matrix<T,n,n>& HqMatrix<T,n>::getRotationMatrix() const {\
-      static Matrix<T,n,n> rot;\
-      for( int i = 0; i < 3; ++i )\
-        rot[i] = (*this)(i);\
-      return rot;\
-    }
-
-  template <typename T, int n>
-  Hq_getRotationMatrix(n)
-
-  template <typename T>
-  Hq_getRotationMatrix(3)
-
-
-
-
-  /*! void HqMatrix<T, n>::invert2()
+  /*! void HqMatrix_<T, n>::invert2()
    *  \brief Invert
    *
    *  overloaded and use only for orthonormal (n-1 x n-1) sub-matrices.
@@ -1706,240 +1444,158 @@ namespace GMlib {
    *  with the orginal sub-matrix
    *  NB!  ONLY ROTATION and TRANSLATION !!!!!!
    */
-#define Hq_invertOrthoNormal(n) inline\
-    void HqMatrix<T, n>::invertOrthoNormal() {\
-      T v[n];\
-      GM_Static3_<T,n,n>::eq1(v, this->getPtr()+n);\
-      GM_Static3_<T,n-1,n+1>::trn(this->getPtr()+n+1, this->getPtr()+1);\
-      GM_Static3_<T,n,n>::cm_x( this->getPtr()+n, this->getPtr(),v);\
-    }
-
   template <typename T, int n>
-  Hq_invertOrthoNormal(n)
+  inline
+  void HqMatrix_<T, n>::invertOrthoNormal() { // overloaded and use only for orthonormal (n-1 x n-1) sub-matrices (rotation matrices)
 
-  template <typename T>
-  Hq_invertOrthoNormal(3)
+    T v[n];
+    GM_Static3_<T,n,n>::eq1(v, this->getPtr()+n);
+    GM_Static3_<T,n-1,n+1>::trn(this->getPtr()+n+1, this->getPtr()+1);
+    GM_Static3_<T,n,n>::cm_x( this->getPtr()+n, this->getPtr(),v);
+  }
 
 
 
 
-  /*! Matrix<T,n+1,n+1>& HqMatrix<T, n>::operator=(const Matrix<T,n+1,n+1>& v)
+  /*! Matrix<T,n+1,n+1>& HqMatrix_<T, n>::operator=(const Matrix<T,n+1,n+1>& v)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_eq(n) inline\
-  Matrix<T,n+1,n+1>& HqMatrix<T, n>::operator=(const Matrix<T,n+1,n+1>& v) {\
-    this->cpy(v);\
-    return(*this);\
+  template <typename T, int n>
+  inline
+  Matrix<T,n+1,n+1>& HqMatrix_<T, n>::operator=(const Matrix<T,n+1,n+1>& v) {
+    this->cpy(v);
+    return(*this);
   }
 
-  template <typename T, int n>
-  Hq_op_eq(n)
 
-  template <typename T>
-  Hq_op_eq(3)
-
-
-
-
-
-  /*! Point<T,n> HqMatrix<T, n>::operator*(const Point<T,n>& v) const
+  /*! APoint<T,n> HqMatrix_<T, n>::operator*(const APoint<T,n>& v) const
    *  \brief p =  T * q, where p and q are points
    *
    *  Returning a point: p =  T * q, where p and q are points i R^n
    *  and T is this matrix.
    */
-#define Hq_op_mult_p(n) inline\
-    Point<T,n> HqMatrix<T, n>::operator*(const Point<T,n>& p) const {\
-      Point<T,n> r;\
-      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), p, this->getPtr()+n);\
-      return r;\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_p(n)
+  inline
+  APoint<T,n> HqMatrix_<T, n>::operator*(const APoint<T,n>& p) const {
 
-  template <typename T>
-  Hq_op_mult_p(3)
+    APoint<T,n> r;
+    GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), p, this->getPtr()+n);
+    return r;
+  }
 
 
-
-
-  /*! Vector<T,n> HqMatrix<T, n>::operator*(const Vector<T,n>& v) const
+  /*! Vector<T,n> HqMatrix_<T, n>::operator*(const Vector<T,n>& v) const
    *  \brief u =  T * v, where u and v are vectors
    *
    *  Returning a vector: u =  T * v, where u and v are vectors i R^n
    *  and T is this matrix. NB!! u is not infected by translation.
    */
-#define Hq_op_mult_v(n) inline\
-    Vector<T,n> HqMatrix<T, n>::operator*(const Vector<T,n>& v) const {\
-      Vector<T,n> r;\
-      GM_Static_P_<T,n,n>::mv_xq(r.getPtr(), this->getPtr(), v);\
-      return r;\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_v(n)
+  inline
+  Vector<T,n> HqMatrix_<T, n>::operator*(const Vector<T,n>& v) const {
 
-  template <typename T>
-  Hq_op_mult_v(3)
+    Vector<T,n> r;
+    GM_Static_P_<T,n,n>::mv_xq(r.getPtr(), this->getPtr(), v);
+    return r;
+  }
 
 
-
-
-  /*! ScalarPoint<T,n> HqMatrix<T, n>::operator*(const ScalarPoint<T,n>& v)const
+  /*! ScalarPoint<T,n> HqMatrix_<T, n>::operator*(const ScalarPoint<T,n>& v)const
    *  \brief  Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_mult_sp(n) inline\
-    ScalarPoint<T,n> HqMatrix<T, n>::operator*(const ScalarPoint<T,n>& p) const {\
-      ScalarPoint<T,n> r;\
-      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), p.getPos(), this->getPtr()+n);\
-      return r;\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_sp(n)
+  inline
+  ScalarPoint<T,n> HqMatrix_<T, n>::operator*(const ScalarPoint<T,n>& p) const {
 
-  template <typename T>
-  Hq_op_mult_sp(3)
+    ScalarPoint<T,n> r;
+//    GM_Static_P_<T,n,n>::mv_xq(r.getPtr(), this->getPtr(), p.getPos());
+    GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), p.getPos(), this->getPtr()+n);
+    return r;
+  }
 
 
-
-
-  /*! Sphere<T,n> HqMatrix<T, n>::operator*(const Sphere<T,n>& v) const
+  /*! Sphere<T,n> HqMatrix_<T, n>::operator*(const Sphere<T,n>& v) const
    *  \brief  Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_mult_s(n) inline\
-    Sphere<T,n> HqMatrix<T, n>::operator*(const Sphere<T,n>& s) const{\
-      Sphere<T,n> r( s.isValid() );\
-      if( s.isValid()) {\
-        GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), s.getPos(), this->getPtr()+n);\
-        Vector<T,n> v(T(0));\
-        v[0]= s.getRadius();\
-        v = (*this) * v;\
-        r.resetRadius( v.getLength() );\
-      }\
-      return r;\
+  template <typename T, int n>
+  inline
+  Sphere<T,n> HqMatrix_<T, n>::operator*(const Sphere<T,n>& s) const{
+
+    Sphere<T,n> r( s.isValid() );
+    if( s.isValid()) {
+
+      // Position
+      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(), this->getPtr(), s.getPos(), this->getPtr()+n);
+
+      // Radius
+      Vector<T,n> v(T(0));
+      v[0]= s.getRadius();
+      v = (*this) * v;
+      r.resetRadius( v.getLength() );
     }
 
-  template <typename T, int n>
-  Hq_op_mult_s(n)
-
-  template <typename T>
-  Hq_op_mult_s(3)
+    return r;
+  }
 
 
-
-
-  /*! Arrow<T,n> HqMatrix<T, n>::operator*(const Arrow<T,n>& v) const
+  /*! Arrow<T,n> HqMatrix_<T, n>::operator*(const Arrow<T,n>& v) const
    *  \brief  Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_mult_a(n) inline\
-    Arrow<T,n> HqMatrix<T, n>::operator*(const Arrow<T,n>& a) const{\
-      Arrow<T,n> r;\
-      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(),  this->getPtr(), a.getPos(), this->getPtr()+n);\
-      GM_Static_P_<T,n,n>::mv_xq(r.getPtr()+n, this->getPtr(), a.getDir());\
-      return r;\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_a(n)
+  inline
+  Arrow<T,n> HqMatrix_<T, n>::operator*(const Arrow<T,n>& a) const{
 
-  template <typename T>
-  Hq_op_mult_a(3)
+    Arrow<T,n> r;
+    GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(),  this->getPtr(), a.getPos(), this->getPtr()+n);
+    GM_Static_P_<T,n,n>::mv_xq(r.getPtr()+n, this->getPtr(), a.getDir());
+    return r;
+  }
 
-
-
-
-  /*! Box<T,n> HqMatrix<T, n>::operator*(const Box<T,n>& v) const
+  /*! Box<T,n> HqMatrix_<T, n>::operator*(const Box<T,n>& v) const
    *  \brief  Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_mult_b(n) inline\
-    Box<T,n>		HqMatrix<T, n>::operator*(const Box<T,n>& b)		const {\
-      Box<T,n> r;\
-      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(),   this->getPtr(), b.getPtr(),   this->getPtr()+n);\
-      GM_Static_P_<T,n,n>::mv_xqP(r.getPtr()+n, this->getPtr(), b.getPtr()+n, this->getPtr()+n);\
-      return r;\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_b(n)
+  inline
+  Box<T,n>		HqMatrix_<T, n>::operator*(const Box<T,n>& b)		const {
 
-  template <typename T>
-  Hq_op_mult_b(3)
+    Box<T,n> r;
+    GM_Static_P_<T,n,n>::mv_xqP(r.getPtr(),   this->getPtr(), b.getPtr(),   this->getPtr()+n);
+    GM_Static_P_<T,n,n>::mv_xqP(r.getPtr()+n, this->getPtr(), b.getPtr()+n, this->getPtr()+n);
+    return r;
+  }
 
 
-
-
-  /*! Matrix<T,n+1,n+1>const&	HqMatrix<T, n>::operator*(const HqMatrix<T,n>& v)	const
+  /*! Matrix<T,n+1,n+1>const&	HqMatrix_<T, n>::operator*(const HqMatrix_<T,n>& v)	const
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_op_mult_hq(n) inline\
-    Matrix<T,n+1,n+1>	HqMatrix<T, n>::operator*(const HqMatrix<T,n>& v)	const {\
-      return (*static_cast<Matrix<T,n+1,n+1>const*>(this)) * (static_cast<const Matrix<T,n+1,n+1>&>(v));\
-    }
-
   template <typename T, int n>
-  Hq_op_mult_hq(n)
+  inline
+  Matrix<T,n+1,n+1>	HqMatrix_<T, n>::operator*(const HqMatrix_<T,n>& v)	const {
 
-  template <typename T>
-  Hq_op_mult_hq(3)
-
-
-
-
-  /*! HqMatrix<T,n>::operator HqMatrix<G,n> () const
-   *  \brief Pending Documentation
-   *
-   *  Casting operator: HqMatrix<T,n> a; HqMatrix<G,n> b = a;
-   */
-#define Hq_op_cast_gen(n) inline\
-    HqMatrix<T,n>::operator HqMatrix<G,n> () const  {\
-      HqMatrix<G,n> v;\
-      GM_Static1_<G,T,(n+1)*(n+1)>::eq( v.getPtr(), this->getPtr() );\
-      return v;\
-    }
+    return (*static_cast<Matrix<T,n+1,n+1>const*>(this)) *
+      (static_cast<const Matrix<T,n+1,n+1>&>(v));
+  }
 
   template <typename T, int n>
   template <typename G>
-  Hq_op_cast_gen(n)
+  HqMatrix_<T,n>::operator HqMatrix<G,n> () const  {
 
-  template <typename T>
-  template <typename G>
-  Hq_op_cast_gen(3)
-
-
-
-
-
-  /*! HqMatrix<T,n>::operator HqMatrix<G,n> () const
-   *  \brief Pending Documentation
-   *
-   *  Casting operator: HqMatrix<T,n> a; HqMatrix<G,n> b = a;
-   */
-#define Hq_cast_gen(n) inline\
-    HqMatrix<G,n> HqMatrix<T,n>::toType() const  {\
-      return this->operator HqMatrix<G,n>();\
-    }
-
-  template <typename T, int n>
-  template <typename G>
-  Hq_cast_gen(n)
-
-  template <typename T>
-  template <typename G>
-  Hq_cast_gen(3)
+    HqMatrix<G,n> v;
+    GM_Static1_<G,T,(n+1)*(n+1)>::eq( v.getPtr(), this->getPtr() );
+    return v;
+  }
 
 
 
@@ -1949,125 +1605,97 @@ namespace GMlib {
   // Protected Member Functions
 
 
-  /*! void HqMatrix<T, n>::hq_cpy(const Matrix<T,n,n>& v)
+  /*! void HqMatrix_<T, n>::hq_cpy(const Matrix<T,n,n>& v)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_cpy(n) inline\
-    void HqMatrix<T, n>::hq_cpy(const Matrix<T,n,n>& v) {\
-      memcpy( this->getPtr(), v.getPtr(), sizeof(Matrix<T,n,n>) );\
-    }
-
   template <typename T, int n>
-  Hq_cpy(n)
+  inline
+  void HqMatrix_<T, n>::hq_cpy(const Matrix<T,n,n>& v) {
 
-  template <typename T>
-  Hq_cpy(3)
+    memcpy( this->getPtr(), v.getPtr(), sizeof(Matrix<T,n,n>) );
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::hq_cpy_t(const Matrix<T,n,n>& v)
+  /*! void HqMatrix_<T, n>::hq_cpy_t(const Matrix<T,n,n>& v)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_cpy_t(n) inline\
-    void HqMatrix<T, n>::hq_cpy_t(const Matrix<T,n,n>& v) {\
-      GM_Static_P_<T,n,n>::eq_t( this->getPtrP(), v.getPtr() );\
-    }
-
   template <typename T, int n>
-  Hq_cpy_t(n)
+  inline
+  void HqMatrix_<T, n>::hq_cpy_t(const Matrix<T,n,n>& v) {
 
-  template <typename T>
-  Hq_cpy_t(3)
+    GM_Static_P_<T,n,n>::eq_t( this->getPtrP(), v.getPtr() );
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::hq_cpy_r(const Point<T,n>& p,int i)
+  /*! void HqMatrix_<T, n>::hq_cpy_r(const APoint<T,n>& p,int i)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_cpy_r(n) inline\
-    void HqMatrix<T, n>::hq_cpy_r(const Point<T,n>& p,int i) {\
-      memcpy((*this)[i].getPtr(),p.getPtr(),sizeof(Point<T,n>));\
-    }
-
   template <typename T, int n>
-  Hq_cpy_r(n)
+  inline
+  void HqMatrix_<T, n>::hq_cpy_r(const APoint<T,n>& p,int i) {
 
-  template <typename T>
-  Hq_cpy_r(3)
+    memcpy((*this)[i].getPtr(),p.getPtr(),sizeof(APoint<T,n>));
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::hq_cpy_c(const Point<T,n>& p,int j)
+  /*! void HqMatrix_<T, n>::hq_cpy_c(const APoint<T,n>& p,int j)
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
-#define Hq_cpy_c(n) inline\
-    void HqMatrix<T, n>::hq_cpy_c(const Point<T,n>& p,int j) {\
-      GM_Static3_<T,n,n>::eq2(p.getPtr(),this->getPtr()+j);\
-    }
-
   template <typename T, int n>
-  Hq_cpy_c(n)
+  inline
+  void HqMatrix_<T, n>::hq_cpy_c(const APoint<T,n>& p,int j) {
 
-  template <typename T>
-  Hq_cpy_c(3)
+    GM_Static3_<T,n,n>::eq2(p.getPtr(),this->getPtr()+j);
+  }
 
 
-
-
-  /*! void HqMatrix<T, n>::makeOrtho(const Vector<T,n>& u, const Vector<T,n>& v, Matrix<T,n+1,n+1>& x)
+  /*! void HqMatrix_<T, n>::makeOrtho(const Vector<T,n>& u, const Vector<T,n>& v, Matrix<T,n+1,n+1>& x)
    *  \brief To make an orthonormal set of basis-vectors using vector u and vector v as a start.
    *
    *  To make an orthonormal set of basis-vectors using vector u and vector v as a start.
    */
-#define Hq_makeOrtho(n) inline\
-    void HqMatrix<T, n>::makeOrtho(const Vector<T,n>& u, const Vector<T,n>& v, Matrix<T,n+1,n+1>& x) {\
-      int i,j,k,ku,kv;\
-      GM_Static_<T,n>::sc_r(x.getPtr(), u.getPtr(), (1/u.getLength()));\
-      x[0][n]=T(0);\
-      GM_Std_<T,n>::ortoNormal(x[1].getPtr(),v.getPtr(), x.getPtr());\
-      x[1][n]=T(0);\
-      ku = u.getMaxAbsIndex();\
-      kv = x[1].getMaxAbsIndex();\
-      for(k=0,i=2; i<n; i++,k++) {\
-        if(k==ku) k++;\
-        if(k==kv) {\
-          k++;\
-          if(k==ku) k++;\
-        }\
-        x.initRow(i, k);\
-      }\
-      for(i=2;i<n;i++) {\
-        for(j=0; j<i; j++) {\
-          T tmp = GM_Static_<T,n>::dpr(x[i].getPtr(),x[j].getPtr());\
-          GM_Static_<T,n>::decomp(x[i].getPtr(),x[j].getPtr(),tmp);\
-        }\
-        x[i].normalize();\
-      }\
-      x.initRow(n,n);\
+  template <typename T, int n>
+  inline
+  void HqMatrix_<T, n>::makeOrtho(const Vector<T,n>& u, const Vector<T,n>& v, Matrix<T,n+1,n+1>& x) {
+
+    int i,j,k,ku,kv;
+    GM_Static_<T,n>::sc_r(x.getPtr(), u.getPtr(), (1/u.getLength()));
+    x[0][n]=T(0);
+    GM_Std_<T,n>::ortoNormal(x[1].getPtr(),v.getPtr(), x.getPtr());
+    x[1][n]=T(0);
+    ku = u.getMaxAbsIndex();
+    kv = x[1].getMaxAbsIndex();
+
+    for(k=0,i=2; i<n; i++,k++)
+    {
+      if(k==ku) k++;
+      if(k==kv)
+      {
+        k++;
+        if(k==ku) k++;
+      }
+      x.initRow(i, k);
     }
 
-  template <typename T, int n>
-  Hq_makeOrtho(n)
-
-  template <typename T>
-  Hq_makeOrtho(3)
-
-
-
-//****************************************************************
-//*****     Functions for specialized HqMatrix<T,3>     **********
-//****************************************************************
+    for(i=2;i<n;i++)
+    {
+      for(j=0; j<i; j++)
+      {
+        T tmp = GM_Static_<T,n>::dpr(x[i].getPtr(),x[j].getPtr());
+        GM_Static_<T,n>::decomp(x[i].getPtr(),x[j].getPtr(),tmp);
+      }
+      x[i].normalize();
+    }
+    x.initRow(n,n);
+  }
 
 
 
@@ -2091,9 +1719,7 @@ namespace GMlib {
   }
 
 
-
-
-  /*! HqMatrix<T,3>::HqMatrix<T,3>(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p)
+  /*! HqMatrix<T,3>::HqMatrix<T,3>(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p)
    *  \brief The general rotation constructor
    *
    *  The constructer gives a rotation matrix rotating in the plane
@@ -2101,7 +1727,7 @@ namespace GMlib {
    */
   template <typename T>
   inline
-  HqMatrix<T,3>::HqMatrix(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p) {
+  HqMatrix<T,3>::HqMatrix(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p) {
 
     Vector<float,3> lu = rot_axis.getLinIndVec();
     Vector<float,3> u  = lu ^ rot_axis;
@@ -2121,9 +1747,6 @@ namespace GMlib {
     GM_Static_P_<T,1,3>::hq_2x(r.getPtr()+2,x[2].getPtr(),p);
     GM_Static_P_<T,3,3>::hq_3x(this->getPtr()+3,x.getPtr(),r,p.getPtr());
   }
-
-
-
 
   /*!
    *  \brief Creates a rotation matrix from a Quaternion
@@ -2148,9 +1771,6 @@ namespace GMlib {
     (*this)[2][1] =     2 * ( q(1) * q(2) + q(0) * q(3) );
     (*this)[2][2] = std::pow(q(2),2) + std::pow(q(3),2) - std::pow(q(0),2) - std::pow(q(1),2);
   }
-
-
-
 
   /*!
    *  \brief Creates a rotation matrix from a UnitQuaternion
@@ -2178,9 +1798,6 @@ namespace GMlib {
     (*this)[2][2] = 1 - 2 * ( std::pow(q(0),2) + std::pow(q(1),2));
   }
 
-
-
-
   /*! void HqMatrix<T,3>::rotate(Angle a, const Vector<T,3>& rot_axis)
    *  \brief Add a rotation to this matrix: (*this) = HqMatrix<T,3>(a,rot_axis) * (*this)
    *
@@ -2196,14 +1813,14 @@ namespace GMlib {
 
 
 
-  /*! HqMatrix<T,3>::rotate(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p)
+  /*! HqMatrix<T,3>::rotate(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p)
    *  \brief Add a rotation to this matrix: (*this) = HqMatrix<T,3>(a,rot_axis,p) * (*this)
    *
    *  Add a rotation to this matrix: (*this) = HqMatrix<T,3>(a,rot_axis,p) * (*this)
    */
   template <typename T>
   inline
-  void HqMatrix<T,3>::rotate(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p){
+  void HqMatrix<T,3>::rotate(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p){
     HqMatrix<T,3> x(a,rot_axis,p);
     *this = *this * x;
   }
@@ -2223,8 +1840,6 @@ namespace GMlib {
   }
 
 
-
-
   /*! void HqMatrix<T,3>::rotateGlobal(Angle a, const Vector<T,3>& rot_axis)
    *  \brief Add a rotation to this matrix: (*this) = HqMatrix<T,n>(a,rot_axis) * (*this)
    *
@@ -2238,22 +1853,17 @@ namespace GMlib {
   }
 
 
-
-
-  /*! HqMatrix<T,3>::rotateGlobal(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p)
+  /*! HqMatrix<T,3>::rotateGlobal(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p)
    *  \brief Add a rotation to this matrix: (*this) = HqMatrix<T,3>(a,rot_axis,p) * (*this)
    *
    *  Add a rotation to this matrix: (*this) = HqMatrix<T,3>(a,rot_axis.p) * (*this)
    */
   template <typename T>
   inline
-  void HqMatrix<T,3>::rotateGlobal(Angle a, const Vector<T,3>& rot_axis, const Point<T,3>& p){
+  void HqMatrix<T,3>::rotateGlobal(Angle a, const Vector<T,3>& rot_axis, const APoint<T,3>& p){
     HqMatrix<T,3> x(a,rot_axis,p);
     this->reverseMult( x );
   }
-
-
-
 
   template <typename T>
   inline
@@ -2261,9 +1871,6 @@ namespace GMlib {
     HqMatrix<T,3> x(q);
     *this = *this * x;
   }
-
-
-
 
   template <typename T>
   inline

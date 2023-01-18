@@ -43,22 +43,16 @@ namespace GMlib {
     static void evaluateH3d( DMatrix<T>& mat, int d, T t );
     static void evaluateH5d( DMatrix<T>& mat, int d, T t );
 
-    static int  knotIndex( const DVector<T>& tv, T t, int d, bool left=false );
-    static T    knotInterval( const DVector<T>& tv, int d, int n );
+    static int  knotIndex( const DVector<T>& tv, T t, int d, bool left );
 
   private:
     static T getW( const DVector<T>& tv, T t, int i, int d );
     static T delta( const DVector<T>& tv, int i, int d,  T scale = 1 );
   };
-
-
-
-} // end namespace GMlib
-
+}
 
 
 // Include function implementations
 #include "gmevaluatorstatic.c"
-
 
 #endif // GM_PARAMETRICS_EVALUATORS_EVALUATORSTATIC_H

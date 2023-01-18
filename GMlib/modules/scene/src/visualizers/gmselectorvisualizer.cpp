@@ -148,17 +148,17 @@ namespace GMlib {
       verts_ptr->nz = top.getDir()(2);
       verts_ptr++;
 
-      u = M_PI_2 - du;
+      u = M_PI_2 - double(du);
 
-      su = sin(u);
-      cu = cos(u);
+      su = sin(double(u));
+      cu = cos(double(u));
       ru = r * cu;
 
       float v = 0;
       for( int i = 0; i < m2+1; i++, v += dv ) {
 
-        const float sv = sin(v);
-        const float cv = cos(v);
+        const float sv = sin(double(v));
+        const float cv = cos(double(v));
 
         verts_ptr->x  = ru*cv;
         verts_ptr->y  = ru*sv;
@@ -179,16 +179,16 @@ namespace GMlib {
       verts_ptr->nz = bottom.getDir()(2);
       verts_ptr++;
 
-      u = M_PI_2 - du * (m1-1);
-      su = sin(u);
-      cu = cos(u);
+      u = M_PI_2 - double(du) * (m1-1);
+      su = sin(double(u));
+      cu = cos(double(u));
       ru = r * cu;
 
       v = 0;
       for( int i = m2; i >= 0; i--, v += dv ) {
 
-        const float sv = sin(v);
-        const float cv = cos(v);
+        const float sv = sin(double(v));
+        const float cv = cos(double(v));
 
         verts_ptr->x = ru*cv;
         verts_ptr->y = ru*sv;
@@ -204,22 +204,22 @@ namespace GMlib {
     // Compute body triangle strips on the sphere
     for( int i = 0; i < m1-2; i++ ) {
 
-      const float u1 = M_PI_2 - du * (i+1);
-      const float u2 = M_PI_2 - du * (i+2);
+      const float u1 = M_PI_2 - double(du) * (i+1);
+      const float u2 = M_PI_2 - double(du) * (i+2);
 
-      const float su1 = sin(u1);
-      const float cu1 = cos(u1);
+      const float su1 = sin(double(u1));
+      const float cu1 = cos(double(u1));
       const float ru1 = r * cu1;
 
-      const float su2 = sin(u2);
-      const float cu2 = cos(u2);
+      const float su2 = sin(double(u2));
+      const float cu2 = cos(double(u2));
       const float ru2 = r * cu2;
 
       for( int j = 0; j < m2+1; j++ ) {
 
         const float v = j * dv;
-        const float sv = sin(v);
-        const float cv = cos(v);
+        const float sv = sin(double(v));
+        const float cv = cos(double(v));
 
         verts_ptr->x = ru1*cv;
         verts_ptr->y = ru1*sv;

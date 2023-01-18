@@ -44,24 +44,17 @@ namespace GMlib {
     virtual ~PSubCurve();
 
     // Public local functions
-    void                togglePlot() {} // Not implemented yet
+    void                    togglePlot() {} // Not implemented yet
 
     //****************************************
     //****** Virtual public functions   ******
     //****************************************
 
-    // from SceneObject
-    // The two first functions below are not meant for public use, they are for editing on the curve
-    void                edit(SceneObject* lp) override;
-
     // from PCurve
-    Vector<T,3>         getSamplePoint(int i, int j) const override;
-    bool                isClosed() const override;
-    void                updateMat() const override;
-    void                openClosedChanged(T s, T t, T e) override;
+    virtual bool        isClosed() const;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
@@ -72,8 +65,6 @@ namespace GMlib {
     T                   _t;
     T                   _e;
     Vector<float,3>     _trans;
-
-    bool                _parent_closed;
 
   private:
 

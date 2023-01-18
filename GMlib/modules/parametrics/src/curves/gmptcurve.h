@@ -42,25 +42,26 @@ namespace GMlib {
     PTCurve( PCurve<T,3>* pcA, PCurve<T,3>* pcB );
     PTCurve( const PTCurve<T>& ptc );
 
-    bool             isClosed() const;
-    void             setAngle( T a );
-    void             setPA( PCurve<T,3>* pcA );
-    void             setPB( PCurve<T,3>* pcB );
+    bool                                isClosed() const;
+    void                                setAngle( T a );
+    void                                setPA( PCurve<T,3>* pcA );
+    void                                setPB( PCurve<T,3>* pcB );
 
 
   protected:
-    // Virtual functiions from PCurve, which have to be implemented locally
-    void             eval( T t, int d, bool l = true ) {}
-    T                getStartP() { return T(0); }
-    T                getEndP() { return T(1); }
-
-
-
-    void             localSimulate( double dt );
-    void             resample( DVector< DVector< Vector<T,3> > >& p, int m, int d, T start, T end );
+    void                                eval( T t, int d, bool l = true ) {}
+    T                                   getStartP() { return T(0); }
+    T                                   getEndP() { return T(1); }
+    void                                localSimulate( double dt );
+    void                                resample( DVector< DVector< Vector<T,3> > >& p, int m, int d, T start, T end );
 
 
   private:
+    void                                _compute( DVector< DVector< Vector<T,3> > >& p );
+    void                                _merge_PA_and_PB( int i );
+    void                                _resample( PCurve<T,3>* obj, DVector<DVector< Vector<T,3> > >& p, int m, int d );
+    Point<T,3>                          _rotate_and_project();
+
     PCurve<T,3>                         *_pcA;
     PCurve<T,3>                         *_pcB;
 
@@ -71,10 +72,7 @@ namespace GMlib {
     bool                                _resampleB;
     Point<T,6>                          _tPoints;
 
-    void                                _compute( DVector< DVector< Vector<T,3> > >& p );
-    void                                _merge_PA_and_PB( int i );
-    void                                _resample( PCurve<T,3>* obj, DVector<DVector< Vector<T,3> > >& p, int m, int d );
-    Point<T,3>                          _rotate_and_project();
+
 
   }; // END class PTCurve
 

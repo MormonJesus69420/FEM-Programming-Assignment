@@ -49,8 +49,7 @@ namespace GMlib{
 
   public:
     Selector(const Selector<T,n>& s);
-    Selector(Point<T,n>& mp, int id, SceneObject* parent, T r=1, const Color& c = Color(0.0,0.0,0.7), Selector<T,n>* root=NULL );
-    Selector(Point<T,n>& mp, int id, SceneObject* parent, const Vector<T,n>& scale, T r=1, const Color& c = Color(0.0,0.0,0.7), Selector<T,n>* root=NULL );
+    Selector(APoint<T,n>& mp, int id, SceneObject* parent, T r=1, const Color& c = Color(0.0,0.0,0.7), Selector<T,n>* root=NULL );
     virtual ~Selector();
 
     void                  disable();
@@ -58,18 +57,17 @@ namespace GMlib{
     void                  enable();
     void                  enableAll();
     int                   getId() const;
-    const Point<T,n>&     getPosition() const;
+    const APoint<T,n>&    getPosition() const;
     bool                  isEnabled() const;
     bool                  toggle();
     void                  update();
-    void                  update(const Point<T,n>& p);
+    void                  update(const APoint<T,n>& p);
 
     // *******************
     // Derived functions
     // from SceneObject
     void                  editPos(Vector<float,3> dp) override;
     void                  edit() override;
-    void                  scale(const Point<float,3>& scale_factor, bool propagate = true ) override;
 
 
   protected:
@@ -85,10 +83,7 @@ namespace GMlib{
   private:
     int                   _id;
     SceneObject*          _parent;
-    Point<T,n>&          _position;
-
-    Vector<T,n>           _scale_inv;
-    bool                  _scaled;
+    APoint<T,n>&          _position;
 
   }; // END class Selector
 

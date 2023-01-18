@@ -42,21 +42,21 @@ namespace GMlib {
   template <typename T, int n, int m>
   class GM_Static_P_ {
   public:
-    static void mv_x(T *a, const Point<T,m>* b, const Point<T,m>& c);		// vec = mat x vec
-    static void mv_xq(T *a, const T* b, const Point<T,m>& c);				// vec = HqMat x vec
-    static void mv_xqP(T *a, const T* b, const Point<T,m>& c, const T* d);		// vec = HqMat x vec + h(homogen col)
+    static void mv_x(T *a, const APoint<T,m>* b, const APoint<T,m>& c);		// vec = mat x vec
+    static void mv_xq(T *a, const T* b, const APoint<T,m>& c);				// vec = HqMat x vec
+    static void mv_xqP(T *a, const T* b, const APoint<T,m>& c, const T* d);		// vec = HqMat x vec + h(homogen col)
 
-    static void eq_t(Point<T,m> *a, const T *b);							// a = b^T	matrix transposeing
-    static void sc(Point<T,m>* a, const T *b);							// scaling of matrix (row by row)
-    static void vv_ox(Point<T,m> *a, const Point<T,m> *b, const T *c);	// a = b x c tensor (outer) product
+    static void eq_t(APoint<T,m> *a, const T *b);							// a = b^T	matrix transposeing
+    static void sc(APoint<T,m>* a, const T *b);							// scaling of matrix (row by row)
+    static void vv_ox(APoint<T,m> *a, const APoint<T,m> *b, const T *c);	// a = b x c tensor (outer) product
 
     static void cm_x(T *a, const T* b, const T* c);								// vec = col x mat
     static void mc_x(T *a, const T *b, const T *c);								// a = b(col)*c	matrix multiplication, but b is transposed
 
-    static void hq_2x(T *a, const T* b, const Point<T,m>& c);			// vec = HqMat x vec
+    static void hq_2x(T *a, const T* b, const APoint<T,m>& c);			// vec = HqMat x vec
     static void hq_3x(T *a, const T* b, const Vector<T,m>& r, const T* p);	// col = vec - vec x HqMat
 
-    //static Point<T,m>& orto(const Point<T,m>& a, Point<T,m> *b)	// To orthogonalization of vectors
+    //static APoint<T,m>& orto(const APoint<T,m>& a, APoint<T,m> *b)	// To orthogonalization of vectors
     //{ return GM_Static_<T,m>::dpr(a.ptr(),b->ptr())*(*b) + GM_Static_P_<T,n-1,m>::orto(a,b+1); }
   }; // END class GM_Static_P_
 
@@ -67,21 +67,21 @@ namespace GMlib {
   template <typename T,int m>
   class GM_Static_P_<T,1,m> {
   public:
-    static void mv_x(T *a, const Point<T,m>* b, const Point<T,m>& c);
-    static void mv_xq(T *a, const T* b, const Point<T,m>& c);
-    static void mv_xqP(T *a, const T* b, const Point<T,m>& c, const T* d);
+    static void mv_x(T *a, const APoint<T,m>* b, const APoint<T,m>& c);
+    static void mv_xq(T *a, const T* b, const APoint<T,m>& c);
+    static void mv_xqP(T *a, const T* b, const APoint<T,m>& c, const T* d);
 
-    static void vv_ox(Point<T,m> *a, const Point<T,m> *b, T *c);
+    static void vv_ox(APoint<T,m> *a, const APoint<T,m> *b, T *c);
 
     static void cm_x(T *a, const T* b, const T* c);
     static void mc_x(T *a, const T *b, const T *c);
 
-    static void sc(Point<T,m>* a, const T *b);
+    static void sc(APoint<T,m>* a, const T *b);
 
-    static void hq_2x(T *a, const T* b, const Point<T,m>& c);
+    static void hq_2x(T *a, const T* b, const APoint<T,m>& c);
     static void hq_3x(T *a, const T* b, const Vector<T,m>& r, const T* p);
 
-    //static Point<T,m>& orto(const Point<T,m>& a, Point<T,m> *b) { return GM_Static_<T,m>::dpr(a.ptr(),b->ptr())*(*b); }
+    //static APoint<T,m>& orto(const APoint<T,m>& a, APoint<T,m> *b) { return GM_Static_<T,m>::dpr(a.ptr(),b->ptr())*(*b); }
   }; // END class GM_Static_P_<T, 1, m> "Terminator"
 
 
@@ -96,7 +96,7 @@ namespace GMlib {
 
   template <typename T, int n, int m>
   inline
-  void v_eq_m_x_v(T* /*a*/, Point<T,m>* /*b*/, const Point<T,m>& /*c*/) {}
+  void v_eq_m_x_v(T* /*a*/, APoint<T,m>* /*b*/, const APoint<T,m>& /*c*/) {}
 
 
   /*! \class  GM_Static_P2_ gmstaticproc2.h <gmStaticProc2.h>
@@ -104,19 +104,19 @@ namespace GMlib {
   template <typename T, int n, int m, int k>
   class GM_Static_P2_ {
   public:
-    static void vm_x(T *a, const Point<T,m>* b, const T* c);					// vec = vec x mat
-    static void vm_xHT(T *a, const Point<T,m+1>* b, const T* c);				// vec =  mat x vec (a = c x b)
-    static void vm_xH(T *a, const Point<T,m+1>* b, const T* c);					// vec(a) = vec(c) x mat(b) (b homogen)
-    static void vm_xT(T *a, const Point<T,m>* b, const T* c);					// vec =  mat x vec (a = c x b)
+    static void vm_x(T *a, const APoint<T,m>* b, const T* c);					// vec = vec x mat
+    static void vm_xHT(T *a, const APoint<T,m+1>* b, const T* c);				// vec =  mat x vec (a = c x b)
+    static void vm_xH(T *a, const APoint<T,m+1>* b, const T* c);					// vec(a) = vec(c) x mat(b) (b homogen)
+    static void vm_xT(T *a, const APoint<T,m>* b, const T* c);					// vec =  mat x vec (a = c x b)
     static void vm_xTT(T *a, const T* b, const T* c);							// a(vec) = b(col) x mat
 
-    static void mm_xT(Point<T,k> *a, const Point<T,m> *b, const T *c);			// a = b*c	matrix multiplication (c transposed)
-    static void mm_xTT(Point<T,k> *a, const T *b, const T *c);					// a = b*c	matrix multiplication (b transposed)
-    static void mm_xH(Point<T,k> *a, const Point<T,m+1> *b, const T *c);		// a = b*c	matrix multiplication (b homogen)
-    static void mm_x(Point<T,k> *a, const Point<T,m> *b, const T *c);			// a = b*c	matrix multiplication
-    static void mm_xHT(T *a, const Point<T,m+1> *b, const T *c);				// a = b*c	matrix multiplication (c transposed)
+    static void mm_xT(APoint<T,k> *a, const APoint<T,m> *b, const T *c);			// a = b*c	matrix multiplication (c transposed)
+    static void mm_xTT(APoint<T,k> *a, const T *b, const T *c);					// a = b*c	matrix multiplication (b transposed)
+    static void mm_xH(APoint<T,k> *a, const APoint<T,m+1> *b, const T *c);		// a = b*c	matrix multiplication (b homogen)
+    static void mm_x(APoint<T,k> *a, const APoint<T,m> *b, const T *c);			// a = b*c	matrix multiplication
+    static void mm_xHT(T *a, const APoint<T,m+1> *b, const T *c);				// a = b*c	matrix multiplication (c transposed)
 
-    static void eq_t(Point<T,m> *a, const T *b);							// a = b^T	matrix transposeing (a = n x m)
+    static void eq_t(APoint<T,m> *a, const T *b);							// a = b^T	matrix transposeing (a = n x m)
 
   }; // END class GM_Static_P2_
 
@@ -126,17 +126,17 @@ namespace GMlib {
   template <class T, int m, int k>
   class GM_Static_P2_<T,1,m,k> {
   public:
-    static void vm_x(T *a, const Point<T,m>* b, const T* c);
-    static void vm_xT(T *a, const Point<T,m>* b, const T* c);
+    static void vm_x(T *a, const APoint<T,m>* b, const T* c);
+    static void vm_xT(T *a, const APoint<T,m>* b, const T* c);
     static void vm_xTT(T *a, const T* b, const T* c);
-    static void vm_xH(T *a, const Point<T,m+1>* b, const T* c);
-    static void vm_xHT(T *a, const Point<T,m+1>* b, const T* c);
+    static void vm_xH(T *a, const APoint<T,m+1>* b, const T* c);
+    static void vm_xHT(T *a, const APoint<T,m+1>* b, const T* c);
 
-    static void mm_x(Point<T,k> *a, const Point<T,m> *b, const T *c);
-    static void mm_xT(Point<T,k> *a, const Point<T,m> *b, const T *c);
-    static void mm_xTT(Point<T,k> *a, const T *b, const T *c);
-    static void mm_xH(Point<T,k> *a, const Point<T,m+1> *b, const T *c);
-    static void mm_xHT(T *a, const Point<T,m+1> *b, const T *c);
+    static void mm_x(APoint<T,k> *a, const APoint<T,m> *b, const T *c);
+    static void mm_xT(APoint<T,k> *a, const APoint<T,m> *b, const T *c);
+    static void mm_xTT(APoint<T,k> *a, const T *b, const T *c);
+    static void mm_xH(APoint<T,k> *a, const APoint<T,m+1> *b, const T *c);
+    static void mm_xHT(T *a, const APoint<T,m+1> *b, const T *c);
 
   }; // END class GM_Static_P2_<T, 1, m, k> "Terminator"
 
@@ -147,7 +147,7 @@ namespace GMlib {
   template <class T, int n, int m>
   class GM_Static_P2_<T,n,m,1> {
   public:
-    static void eq_t(Point<T,m> *a, const T *b);
+    static void eq_t(APoint<T,m> *a, const T *b);
 
   }; // END class GM_Static_P2_<T, n, m, 1> "Terminator"
 

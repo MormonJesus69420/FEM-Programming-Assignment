@@ -27,13 +27,19 @@ namespace GMlib {
     bool            isClosed() const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void            eval( T t, int d = 0, bool l = false ) const override;
     T               getEndP()   const override;
     T               getStartP() const override;
 
+    // Help function
+    T               W( T t, int d, int i ) const;
+    T               delta( T s, int d, int i ) const;
+    void            makeMat( DMatrix<T>& mat, int i, int d, T t, T scale ) const;
+    int             findIndex( T t, int s ) const;
+
     // Protected data for the curve
-    DVector<T>      _t; // Knot vector
+    DVector<T>      _t;
 
   }; // END class PBSplineBasisCurve
 

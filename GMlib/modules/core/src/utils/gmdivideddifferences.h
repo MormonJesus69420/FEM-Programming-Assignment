@@ -38,12 +38,6 @@ namespace GMlib {
     void compute2D( T& p, double du, double dv, bool closed_u, bool closed_v, int d1, int d2, int ed1 = 0, int ed2 = 0 );
 
 
-    template <typename T, typename G>
-    void compute1D( T& p, const G& t, bool closed, int d, int ed = 0 );
-
-    template <typename T, typename G>
-    void compute2D( T& p, const G& u, const G& v, bool closed_u, bool closed_v, int d1, int d2, int ed1 = 0, int ed2 = 0 );
-
     /*!
      * A method for computing N dimensional recursive divided differenses on a parametric-regularized dataset.
      * The container must be a 2*N dimenional container where the first N dimensions represent the dimensions of the dataset,

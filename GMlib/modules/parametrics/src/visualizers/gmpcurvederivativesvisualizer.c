@@ -37,47 +37,13 @@ namespace GMlib {
     _vbo.create();
 
     _color = GMcolor::green();
-    _mode  = GM_PCURVE_DERIVATIVESVISUALIZER_RELATIVE;
-    _size  = 1.0;
-    _der   = 1;
+    _t = 1;
+    _mode = GM_PCURVE_DERIVATIVESVISUALIZER_RELATIVE;
+    _size = 1.0;
   }
-
-
-
-  template <typename T, int n>
-  PCurveDerivativesVisualizer<T,n>::PCurveDerivativesVisualizer(std::vector<DVector<Vector<T,3>>>& p)
-      : PCurveVisualizer<T,n>(p){
-
-    _prog.acquire("color");
-    _vbo.create();
-
-    _color = GMcolor::green();
-    _mode  = GM_PCURVE_DERIVATIVESVISUALIZER_RELATIVE;
-    _size  = 1.0;
-    _der   = 1;
-  }
-
-
-
-  template <typename T, int n>
-  PCurveDerivativesVisualizer<T,n>::PCurveDerivativesVisualizer(const PCurveDerivativesVisualizer<T,n>& copy)
-      : PCurveVisualizer<T,n>(copy){
-
-    _prog.acquire("color");
-    _vbo.create();
-
-    _color = copy._color;
-    _mode  = copy._mode;
-    _size  = copy._size;
-    _der   = copy._der;
-  }
-
-
 
   template <typename T, int n>
   PCurveDerivativesVisualizer<T,n>::~PCurveDerivativesVisualizer() { }
-
-
 
   template <typename T, int n>
   inline
@@ -86,6 +52,7 @@ namespace GMlib {
     const HqMatrix<float,3> &mvpmat = obj->getModelViewProjectionMatrix(renderer->getCamera());
 
     _prog.bind(); {
+
       _prog.uniform( "u_mvpmat", mvpmat );
       _prog.uniform( "u_color", _color );
 
@@ -94,10 +61,10 @@ namespace GMlib {
 
       // Bind & draw
       _vbo.bind();
-        _vbo.enable(vert_loc, 3, GL_FLOAT, GL_FALSE, 0, static_cast<const GLvoid*>(0x0) );
-        GL_CHECK(glDrawArrays( GL_LINES, 0, _no_elements ));
-        _vbo.disable(vert_loc);
-      _vbo.unbind();
+      _vbo.enable(vert_loc, 3, GL_FLOAT, GL_FALSE, 0, static_cast<const GLvoid*>(0x0) );
+      GL_CHECK(glDrawArrays( GL_LINES, 0, _no_elements ));
+      _vbo.disable(vert_loc);
+
     } _prog.unbind();
   }
 
@@ -110,7 +77,7 @@ namespace GMlib {
   template <typename T, int n>
   int PCurveDerivativesVisualizer<T,n>::getDerivative() const {
 
-    return _der;
+    return _t;
   }
 
   template <typename T, int n>
@@ -128,56 +95,66 @@ namespace GMlib {
   template <typename T, int n>
   inline
   void PCurveDerivativesVisualizer<T,n>::replot(
-    const std::vector< DVector< Vector<T, n> > >& p,
-    int /*m*/, int /*d*/, bool /*closed*/) {
+    const DVector< DVector< Vector<T, n> > >& p,
+    int /*m*/, int /*d*/, bool /*closed*/
+  ) {
 
     int der = 0;
-    if( _der > 0 && _der < p[0].getDim() )
-      der = _der;
-    else
-        std::cerr << "Error - derivative wrong, nr." << _der << std::endl;
+    if( (_t >= 0) || (_t <= p(0).getDim()-1) )
+      der = _t;
 
-    _no_elements = 2 * p.size();
 
-    _vbo.bufferData(_no_elements * 3 * sizeof(float), 0x0, GL_DYNAMIC_DRAW);
+    int no_derivatives = p.getDim();
+    _no_elements = no_derivatives * 2;
+
+    _vbo.bufferData(no_derivatives * 2 * 3 * sizeof(float), 0x0, GL_DYNAMIC_DRAW);
 
     float *ptr = _vbo.mapBuffer<float>();
-
     if( ptr ) {
+
       switch( _mode ) {
       case GM_PCURVE_DERIVATIVESVISUALIZER_RELATIVE: {
-          for( uint i = 0; i < p.size(); i++ ) {
-            const Vector<T,3> &pos =p[i](0);
+
+          for( int i = 0; i < p.getDim(); i++ ) {
+
+            const Vector<T,3> &pos =p(i)(0);
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j));
-            const Vector<T,3> v = p[i](der) * _size;
+              *(ptr++) = pos(j);
+
+            const Vector<T,3> v = p(i)(der) * _size;
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j) + v(j));
+              *(ptr++) = pos(j) + v(j);
           }
         }
         break;
 
       case GM_PCURVE_DERIVATIVESVISUALIZER_ABSOLUTE: {
-          for( uint i = 0; i < p.size(); i++ ) {
-            const Vector<T,3> &pos =p[i](0);
+
+          for( int i = 0; i < p.getDim(); i++ ) {
+
+            const Vector<T,3> &pos =p(i)(0);
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j));
-            const Vector<T,3> v = p[i](der).getNormalized() * _size;
+              *(ptr++) = pos(j);
+
+            const Vector<T,3> v = p(i)(der).getNormalized() * _size;
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j) + v(j));
+              *(ptr++) = pos(j) + v(j);
           }
         }
         break;
 
       case GM_PCURVE_DERIVATIVESVISUALIZER_NORMALIZED:
       default: {
-          for( uint i = 0; i < p.size(); i++ ) {
-            const Vector<T,3> &pos =p[i](0);
+
+          for( int i = 0; i < p.getDim(); i++ ) {
+
+            const Vector<T,3> &pos =p(i)(0);
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j));
-            const UnitVector<T,3> uv = p[i](der);
+              *(ptr++) = pos(j);
+
+            const UnitVector<T,3> uv = p(i)(der);
             for( int j = 0; j < 3; j++ )
-              *(ptr++) = float(pos(j) + uv(j));
+              *(ptr++) = pos(j) + uv(j);
           }
         }
         break;
@@ -187,13 +164,6 @@ namespace GMlib {
     _vbo.unmapBuffer();
   }
 
-
-  template <typename T, int n>
-  void PCurveDerivativesVisualizer<T,n>::update() {
-      _no_elements = 2 * (*(this->_p)).size();
-      replot( *(this->_p), 0, 0);
-  }
-
   template <typename T, int n>
   void PCurveDerivativesVisualizer<T,n>::setColor( const Color& color ) {
 
@@ -201,10 +171,10 @@ namespace GMlib {
   }
 
   template <typename T, int n>
-  void PCurveDerivativesVisualizer<T,n>::setDerivative( int der ) {
+  void PCurveDerivativesVisualizer<T,n>::setDerivative( int t ) {
 
-    if( der > 0 )
-      _der = der;
+    if( _t > 0 )
+      _t = t;
   }
 
   template <typename T, int n>

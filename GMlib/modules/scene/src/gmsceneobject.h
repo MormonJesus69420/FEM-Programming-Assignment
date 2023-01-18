@@ -44,6 +44,8 @@
 
 
 
+
+
 /////////////////////
 
 // getIdentity
@@ -78,6 +80,8 @@
   private:
 
 //////////////////
+
+
 
 
 
@@ -201,7 +205,6 @@ namespace GMlib{
     int                                 getTypeId() const;
     unsigned int                        getName() const;
     virtual unsigned int                getVirtualName() const;
-    virtual int                         getNumber() const { return -1;}
 
     void                                insert(SceneObject* obj);
     void                                remove(SceneObject* obj);
@@ -212,13 +215,11 @@ namespace GMlib{
     const Array<SceneObject*>&          getChildren() const;
     SceneObject*                        getParent() const;
     void                                setParent(SceneObject* obj);
-    SceneObject*                        getDerived() const;
-    void                                setDerived(SceneObject* obj);
 
     const SceneObject*                  find(unsigned int name) const;
     SceneObject*                        find(unsigned int name);
 
-    const Point<float,3>&               getCenterPos() const;
+    const APoint<float,3>&              getCenterPos() const;
 
     ArrayT<SceneObjectAttribute*>&      accessSceneObjectAttributes();
 
@@ -255,7 +256,7 @@ namespace GMlib{
                                              const Vector<float,3>& up );
 
 
-    const Point<float,3>&               getLockPos() const;
+    const APoint<float,3>&              getLockPos() const;
     double                              getLockDist() const;
     bool                                isLocked() const;
     virtual void                        lock(SceneObject* obj);
@@ -270,16 +271,10 @@ namespace GMlib{
 
     // editing/interaction
     virtual void                        edit(int selector_id);
-    virtual void                        edit(int selector_id, const Vector<float,3>& delta);
-    virtual void                        edit(int selector_id, const Vector<double,3>& delta);
     virtual void                        edit(SceneObject* lp);
     virtual void                        edit();
     virtual void                        editPos(Vector<float,3> delta);
     virtual void                        enableChildren( bool enable = true );
-
-    void                                setEditDone(bool val=true) const { _edit_done = val; }
-    bool                                getEditDone() const { return _edit_done; }
-    void                                getEditedObjects(Array<const SceneObject*>& e_obj) const;
 
     // properties
     bool                                isSelected() const;
@@ -290,8 +285,6 @@ namespace GMlib{
     virtual bool                        isVisible() const;
     virtual void                        setVisible( bool v, int prop = 0 );
     virtual bool                        toggleVisible();
-
-    bool                                isScaled() { return _scale.isActive(); }
 
     // transformation
     virtual void                        rotate(Angle a, const Vector<float,3>& rot_axel, bool propagate = true );
@@ -328,12 +321,8 @@ namespace GMlib{
     bool                                isCollapsed() const;
     virtual void                        setCollapsed(bool c);
     virtual bool                        toggleCollapsed();
-    virtual void                        toggleClose() {}
-    virtual void                        toggleSelectors() {}
-
     bool                                isLighted() const;
     void                                setLighted( bool lighted );
-
     bool                                isOpaque() const;
     void                                setOpaque( bool o );
 
@@ -342,7 +331,6 @@ namespace GMlib{
     const Array<Visualizer*>&           getVisualizers() const;
     virtual void                        insertVisualizer( Visualizer* visualizer );
     virtual void                        removeVisualizer( Visualizer* visualizer );
-    virtual void                        replot() const;
 
     virtual void                        simulate( double dt );
 
@@ -368,7 +356,6 @@ namespace GMlib{
     HqMatrix<float,3>                   _present;               //!< The difference matrix from global to this.
     HqMatrix<float,3>                   _matrix_scene;          //!< Matrix from this to scene
     HqMatrix<float,3>                   _matrix_scene_inv;      //!< Matrix from scene to this
-    ScaleObject                         _scale;                 //!< The scaling for this and the children.
     bool                                _local_cs;              //!< Using local coordinate system, default is true
 
     Point<float,3>                      _pos;
@@ -388,9 +375,10 @@ namespace GMlib{
 
     Array<Visualizer*>                  _visualizers;
 
+
     Scene*                              _scene;                 //!< The scene of the display hiearchy
     SceneObject*                        _parent;                //!< the mother in the hierarchy (tree).
-    SceneObject*                        _derived;               //!< _derived is derived from this object.
+    ScaleObject                         _scale;                 //!< The scaling for this and the children.
     int                                 _type_id;
     Array<SceneObject*>                 _children;
     bool                                _is_part;               //! true if the object is seen as a part of a larger object
@@ -403,15 +391,13 @@ namespace GMlib{
 
     bool                                _selected;
     bool                                _visible;               //!< culling on invisible items
-    mutable bool                        _edit_done;             //!< message that the object need to be replotted
-    mutable bool                        _is_editable;           //!< This object is not editable
 
     ArrayT<SceneObjectAttribute*>       _scene_object_attributes;
 
 
     void                                reset();
 
-    void                                setSurroundingSphere( const Sphere<float,3>& b ) const;
+    void                                setSurroundingSphere( const Sphere<float,3>& b );
     void                                updateSurroundingSphere( const Point<float,3>& p );
 
     Point<float,3>                      getSceneLockPos();
@@ -420,7 +406,7 @@ namespace GMlib{
   protected:
     static unsigned int                 _free_name;             //!< For automatisk name-generations.
     unsigned int                        _name;                  //!< Unic name for this object, used for selecting
-    mutable Sphere<float,3>             _sphere;                //!< Surrounding sphere for this object
+    Sphere<float,3>                     _sphere;                //!< Surrounding sphere for this object
 
     virtual void                        basisChange( const Vector<float,3>& dir,
                                                      const Vector<float,3>& side,
@@ -432,9 +418,6 @@ namespace GMlib{
 
   friend void Scene::prepare();
   int                                   prepare(Array<HqMatrix<float,3> >& mat, Scene* s, SceneObject* mother = 0);
-
-  private:
-  void                                  _init( const Point<float,3>&  pos, const Vector<float,3>& dir, const Vector<float,3>& up);
 
   // *****************************
   // IOSTREAM overloaded operators
@@ -551,18 +534,17 @@ namespace GMlib{
   const HqMatrix<float,3>& SceneObject::getMatrixToSceneInverse() const {  return _matrix_scene_inv; }
 
 
-  inline bool SceneObject::isCollapsed() const  { return _collapsed; }
-  inline void SceneObject::setCollapsed(bool c) { _collapsed = c; }
-  inline bool SceneObject::toggleCollapsed()    { return _collapsed = !_collapsed; }
-
-  inline bool SceneObject::isOpaque() const     { return _opaque; }
-  inline void SceneObject::setOpaque( bool o )  { _opaque = o; }
+  inline bool SceneObject::isCollapsed() const {  return _collapsed; }
+  inline bool SceneObject::isOpaque() const {  return _opaque; }
+  inline void SceneObject::setCollapsed(bool c) {  _collapsed = c; }
+  inline void SceneObject::setOpaque( bool o ) {  _opaque = o; }
+  inline bool SceneObject::toggleCollapsed() {  return _collapsed = !_collapsed; }
 
 
 
 
   inline
-  const Point<float,3>& SceneObject::getLockPos() const {
+  const APoint<float,3>& SceneObject::getLockPos() const {
 
     if(_lock_object)
       return  _lock_object->getCenterPos();
@@ -574,7 +556,7 @@ namespace GMlib{
   double SceneObject::getLockDist() const {
 
     if(_locked)
-      return  ( getLockPos()-getPos() ).getLength();
+      return  double(( getLockPos()-getPos() ).getLength());
     else
       return  0.0;
   }
@@ -602,7 +584,7 @@ namespace GMlib{
   void SceneObject::updateOrientation(const Point<float,3>& lock_pos ) {
 
     _dir    = lock_pos - _pos;
-    _up     = _up - (_up * _dir) * _dir;
+    _up     = _up - double(_up * _dir) * _dir;
     _side   = _up ^ _dir;
   }
 
@@ -636,24 +618,6 @@ namespace GMlib{
    */
   inline
   void SceneObject::edit( int /* selector_id */ ) {}
-
-
-  /*! void SceneObject::edit(int selector_id, Vector<float,3> delta)
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  inline
-  void SceneObject::edit( int /* selector_id */, const Vector<float,3>& /* delta*/ ) {}
-
-
-  /*! void SceneObject::edit(int selector_id, Vector<double,3> delta)
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  inline
-  void SceneObject::edit( int /* selector_id */, const Vector<double,3>& /* delta*/ ) {}
 
 
   /*! void SceneObject::edit(SceneObject* lp)
@@ -717,7 +681,7 @@ namespace GMlib{
    *  Pending Documentation
    */
   inline
-  const Point<float,3>& SceneObject::getCenterPos() const  {
+  const APoint<float,3>& SceneObject::getCenterPos() const  {
 
     return  getSurroundingSphere().getPos();
   }
@@ -764,20 +728,11 @@ namespace GMlib{
     return _name;
   }
 
-
   inline
   SceneObject* SceneObject::getParent() const {
 
     return _parent;
   }
-
-
-  inline
-  SceneObject* SceneObject::getDerived() const {
-
-    return _derived;
-  }
-
 
   inline
   Scene*
@@ -785,7 +740,6 @@ namespace GMlib{
 
     return _scene;
   }
-
 
   inline
   const Scene*
@@ -857,8 +811,6 @@ namespace GMlib{
   inline
   void SceneObject::selectEvent( int /* selector_id */ ) {}
 
-
-
   /*! void SceneObject::setParent( SceneObject* obj )
    *  \brief Pending Documentation
    *
@@ -871,18 +823,6 @@ namespace GMlib{
   }
 
 
-
-
-  /*! void SceneObject::setDerivedFrom( SceneObject* obj )
-   *  \brief Pending Documentation
-   *
-   *  Pending Documentation
-   */
-  inline
-  void SceneObject::setDerived( SceneObject* obj ) {
-
-    _derived = obj;
-  }
 
 
 
@@ -899,6 +839,7 @@ namespace GMlib{
 
     // Propagate Children
     if( prop != 0 ) {
+
       if( prop > 0)
         prop -= 1;
 
@@ -920,112 +861,8 @@ namespace GMlib{
   }
 
 
-
-  inline
-  const Color&  SceneObject::getColor() const       { return _color; }
-
-  inline
-  Color&        SceneObject::getColor()             { return _color; }
-
-  inline
-  void          SceneObject::setColor( const Color& c ) { _color = c; }
-
-
-
-
-  inline
-  const Material& SceneObject::getMaterial() const        { return _material; }
-
-  inline
-  Material&       SceneObject::getMaterial()              { return _material; }
-
-  inline
-  void            SceneObject::setMaterial( const Material& m ) { _material = m; }
-
-
-
-
-  inline
-  bool          SceneObject::isLighted() const          { return _lighted; }
-
-  inline
-  void          SceneObject::setLighted( bool lighted ) { _lighted = lighted; }
-
-
-
-
-
-  /*! Array<Visualizer*>& SceneObject::getVisualizers()
-   *  Pending Documentation
-   */
-  inline
-  Array<Visualizer*>&       SceneObject::getVisualizers()       { return _visualizers; }
-
-  inline
-  const Array<Visualizer*>& SceneObject::getVisualizers() const { return _visualizers; }
-
-
-
-
-  /*! void _init( const Point<float,3>&  pos, const Vector<float,3>& dir, const Vector<float,3>& up)
-   *  Pending Documentation
-   */
-  inline
-  void SceneObject::_init( const Point<float,3>&  pos, const Vector<float,3>& dir, const Vector<float,3>& up) {
-
-    set( pos, dir, up );
-    _scene            = 0x0;
-    _parent           = 0x0;
-    _derived          = 0x0;
-    _name             = _free_name++;
-    _local_cs         = true;
-    _type_id          = GM_SO_TYPE_SCENEOBJECT;
-    _is_part          = false;
-    _visible          = true;
-    _selected         = false;
-    _is_editable      = false;
-    _edit_done        = false;
-
-    _lighted          = true;
-    _opaque           = true;
-    _material         = GMmaterial::polishedCopper();
-    _color            = GMcolor::red();
-    _collapsed        = false;
-  }
-
-
-
-
-
-#ifdef GM_STREAM
-//**************************************************************
-//****** IOSTREAM overloaded operators for std::vector *********
-//**************************************************************
-
-template<typename T_Stream, typename T>
-T_Stream& operator<<( T_Stream& out, const std::vector<T>& v ) {
-
-    out << v.size() << GMlib::GMseparator::group();
-    for( unsigned int i = 0; i < v.size(); i++ )
-      out << v[i] << GMlib::GMseparator::element();
-    return out;
-}
-
-template<typename T_Stream, typename T>
-T_Stream& operator>>( T_Stream& in, std::vector<T>& v ) {
-
-    static GMlib::Separator gs(GMlib::GMseparator::group());
-    static GMlib::Separator es(GMlib::GMseparator::element());
-    int a;
-    in >> a >> gs;
-    v.rezise(a);
-    for( int i = 0; i < v.size(); i++ )
-      in >> v[i] >> es;
-    return in;
-}
-
-#endif
-
 } // END namespace GMlib
+
+
 
 #endif  // GM_SCENE_SCENEOBJECT_H

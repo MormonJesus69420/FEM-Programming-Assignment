@@ -23,9 +23,9 @@
 
 
 
+
 #include "gmperbscurve.h"
 
-#include "../evaluators/gmevaluatorstatic.h"
 
 #include "gmparc.h"
 #include "gmpbeziercurve.h"
@@ -34,159 +34,94 @@
 
 namespace GMlib {
 
-
-//*****************************************
-// Constructors and destructor           **
-//*****************************************
-
+  // Constructors and destructors
+  //******************************
 
   template <typename T>
   inline
-  PERBSCurve<T>::PERBSCurve(){
-
-    init(false);
+  PERBSCurve<T>::PERBSCurve()
+  {
+    this->_type_id = GM_SO_TYPE_CURVE_ERBS;
+    init();
   }
 
 
-
-  /*! PERBSCurve<T>::PERBSCurve( PCurve<T,3>* g, int n, bool cu_len)
-   *  \brief Constructor copy curve g, using SubCurves
-   *
-   *  Making an ordinary blending-spline curve (ERBS)
-   *
-   *  \param g      The original curve to copy
-   *  \param n      The number of local curves to use
-   *  \param cu_len Whether we use uniform sampling (false), or curve length sampling (true)
-   */
   template <typename T>
   inline
-  PERBSCurve<T>::PERBSCurve(PCurve<T,3>* g, int n, bool cu_len) {
+  PERBSCurve<T>::PERBSCurve( CURVE_TYPE type, PCurve<T,3>* g, int n, int d)
+  {
+    this->_type_id = GM_SO_TYPE_CURVE_ERBS;
+    init();
 
-    _type_local = SUB_CURVE;
-    g->setDerived(this);
-    _origin     = g;
-    init(g->isClosed());
+    _closed = g->isClosed();
+    if( _closed ) n++;
 
-    if(cu_len)
-        generateCuLenKnotVector(g, n, isClosed());
-    else
-        generateKnotVector(g, n, isClosed());
+    generateKnotVector(g, n);
 
     // Make local curves.
     _c.setDim(n);
-    for( int i = 0; i < n; i++ ) {
-       _c[i] = new PSubCurve<T>(g,  _t[i], _t[i+2], _t[i+1]);
-       _c[i]->setNumber(i);
-       insertLocal(_c[i]);
+    for( int i = 1; i < n; i++ ) {
+      _c[i-1] = makeLocal(type, g, _t[i-1], _t[i], _t[i+1], d);
+      insertLocal( _c[i-1] );
+    }
+
+    // Handle Open/Closed
+    if( _closed )
+      _c[n-1] = _c[0];
+    else {
+      _c[n-1] = makeLocal(type, g, _t[n-1], _t[n], _t[n+1], d);
+      insertLocal( _c[n-1] );
     }
   }
 
 
-
-
-  /*! PERBSCurve<T>::PERBSCurve(PCurve<T,3>* g, int n, int d, bool cu_len)
-   *  \brief Constructor copy curve g, using BezierCurves
-   *
-   *  Making an ordinary blending-spline curve (ERBS)
-   *
-   *  \param g      The original curve to copy
-   *  \param n      The number of local curves to use
-   *  \param n      The polynomial degree of the Bezier curves
-   *  \param cu_len Whether we use uniform sampling (false), or curve length sampling (true)
-   */
   template <typename T>
   inline
-  PERBSCurve<T>::PERBSCurve(PCurve<T,3>* g, int n, int d, bool cu_len) {
+  PERBSCurve<T>::PERBSCurve( const PERBSCurve<T>& copy ) : PCurve<T,3>( copy )
+  {
+    init();
 
-    _type_local = BEZIER_CURVE;
-    _origin     = g;
-    init(g->isClosed());
+    _closed = copy._closed;
+    _t = copy._t;
 
-    if(cu_len)
-        generateCuLenKnotVector(g, n, isClosed());
-    else
-        generateKnotVector(g, n, isClosed());
+    // sync local patches
+    const DVector< PCurve<T,3>* > &c = copy._c;
+    _c.setDim( c.getDim() );
+    Array< unsigned int > cl;
+    Array< int > cli;
 
-    // Make local curves.
-    _c.setDim(n);
-    for( int i = 0; i < n; i++ )
-      insertLocal(_c[i] = new PBezierCurve<T>(g->evaluateParent(_t[i+1], d), _t[i], _t[i+1], _t[i+2]));
-  }
+    for( int i = 0; i < c.getDim(); ++i ) {
 
-
-
-  /*! PERBSCurve<T>::PERBSCurve(int n, PCurve<T,3>* g, bool cu_len)
-   *  \brief Constructor copy curve g, using ArcCurves
-   *
-   *  Making an ordinary blending-spline curve (ERBS)
-   *
-   *  \param n      The number of local curves to use
-   *  \param g      The original curve to copy
-   *  \param cu_len Whether we use uniform sampling (false), or curve length sampling (true)
-   */
-  template <typename T>
-  inline
-  PERBSCurve<T>::PERBSCurve(int n, PCurve<T,3>* g, bool cu_len) {
-
-      _type_local = ARC_CURVE;
-      _origin     = g;
-      init(g->isClosed());
-
-    if(cu_len)
-        generateCuLenKnotVector(g, n, isClosed());
-    else
-        generateKnotVector(g, n, isClosed());
-
-    // Make local curves.
-    _c.setDim(n);
-    for( int i = 0; i < n; i++ )
-      insertLocal(_c[i] = new PArc<T>(g->evaluateParent(_t[i+1], 2), _t[i], _t[i+1], _t[i+2]));
-  }
+      cli += i;
+      cl  += c(i)->getName();
+    }
 
 
+    // Find and save the reference to the local patches
+    for( int i = 0; i < this->getChildren().getSize(); ++i ) {
 
-  /*! PERBSCurve<T>::PERBSCurve(int n, PCurve<T,3>* g, bool cu_len)
-   *  \brief The copy constructor.
-   *
-   *  Making an ordinary blending-spline curve (ERBS)
-   *
-   *  \param copy   The PERBSCurve to copy
-   */
-  template <typename T>
-  inline
-  PERBSCurve<T>::PERBSCurve( const PERBSCurve<T>& copy ) : PCurve<T,3>( copy ) {
+      SceneObject *child = this->getChildren()[i];
+      for( int j = cl.getSize() - 1; j >= 0; --j ) {
 
-      init(copy._cl);
-      _origin = copy._origin;
+        if( cl[j] == child->_copy_of->getName() ) {
 
-      // Copy the knot vector
-      _t = copy._t;
+          int idx = cli[j];
 
-      // sync local patches
-      const DVector<PCurve<T,3>*> &c = copy._c;
-      _c.setDim( c.getDim() );
+          _c[idx] = static_cast<PCurve<T,3>*>(child);
 
-      // Find and save the reference to the local patches
-      for( int i = 0; i < c.getDim(); ++i ) {
-          SceneObject* local_p =  dynamic_cast<SceneObject*>(c[i]);
-          for( int j = 0; j < this->getChildren().getSize(); ++i ) {
-              SceneObject *child = this->getChildren()[j];
-              if( local_p == child->_copy_of) {
-                  _c[i] = dynamic_cast<PCurve<T,3>*>(child);
-                  break;
-              }
-          }
+          cl.removeIndex(j);
+          cli.removeIndex(j);
+        }
       }
+    }
   }
 
 
-
-
-
   template <typename T>
-  PERBSCurve<T>::~PERBSCurve() {
-
-    for( int i = 0; i < _c.getDim(); i++ ) {
+  PERBSCurve<T>::~PERBSCurve()
+  {
+    for( int i = 0; i < _c.getDim(); i++ )
+    {
       SceneObject::remove( _c[i] );
       delete _c[i];
     }
@@ -195,126 +130,74 @@ namespace GMlib {
       delete _evaluator;
   }
 
-
-
-
-  //*********************************
-  //**   Public local functons     **
-  //*********************************
-
-
-
-  /*! void PERBSCurve<T>::setPartitionCriterion(int pct)
-   *  \brief To set criterion for partitions of the curve
-   *
-   *  To set a criterion for how to split the curve into several partitions
-   *  This can ensure discontinuities at different levels are displayed
-   *
-   *  Note that you have to call:
-   *            sample( int m, int d ) after changing the criterion.
-   *
-   *  \param  pct  partition criterie (valid values are 0 and 1.
-   *          pct = 0 - split where we have a discontinue function (multiplisity = order = 2)
-   *          pct = 1 - split in every single knot
-   */
-  template <typename T>
-  inline
-  void PERBSCurve<T>::setPartitionCriterion(int pct) {
-      _pct = pct;
-  }
-
-
-
-
-
   template <typename T>
   inline
   void PERBSCurve<T>::edit( SceneObject *obj )
   {
-      if(obj->getName() == _origin->getName()) {
-          int m = this->getNumSamples();
-          int d = this->getNumDerivatives();
-          if(_origin->isClosed() != this->isClosed()) { // fra lukket til åpen etc.
-              _origin->sample(m, d);
-              _cl = _origin->isClosed();
-              generateKnotVector(_origin, _c.getDim(), isClosed());
-              // Uppdate local curves.
-              for( int i = 0; i < _c.getDim(); i++ )
-                  _c[i]->openClosedChanged(_t[i], _t[i+1], _t[i+2]);
-          }
-          sample(m, d);
-          for(int j=0; j<_c.getDim(); j++)
-              _c[j]->edit(obj);
-      }
-      else {
-          int i = obj->getNumber();
-          if(i >= 0) {
-              for(uint j=0; j<_local_change.size(); j++)
-                  if(i == _local_change[j]) return;
-              _local_change.push_back(i);
-              this->setEditDone();
-          }
-          if( this->_parent && !(obj->getName() == _origin->getName()))
-              this->_parent->edit( this );
-      }
+    int i;
+    for( i = 0; i < _c.getDim(); i++ )
+      if( _c[i] == obj )
+        goto edit_loop_break;
+
+    edit_loop_break:
+
+    // If Bezier Patch
+    PBezierCurve<T> *bezier = dynamic_cast<PBezierCurve<T>*>(_c[i]);
+    if( bezier )
+      bezier->updateCoeffs( _c[i]->getPos() - _c[i]->evaluateParent(_t[i],0)[0]);
+
+    replot();
   }
 
 
-
-
-
-  // This function is not meant for public use
-
-  /*! void PERBSCurve<T>::replot()
-   *  \brief Not for public use
-   *
-   *  To replot after object editing or shape changing else,
-   *  therefor, this function is not meant for public use
-   */
   template <typename T>
-  void PERBSCurve<T>::replot() const {
-
-      updatSamples();
-      PCurve<T,3>::replot();
-  }
-
-
-
-
-
-
-
-
-  template <typename T>
-  void PERBSCurve<T>::eval( T t, int d, bool left ) const
+  void PERBSCurve<T>::eval( T t, int d, bool l ) const
   {
-    int k = EvaluatorStatic<T>::knotIndex(_t, t, 1, left);
 
-    IndexBsp ii( k, 2, _c.getDim());
+    int k;
+    if( _resamp_mode == GM_RESAMPLE_PREEVAL ){
+
+      // Find knot
+      k = findIndex(t);
+    }
+    else {
+
+      // Find knot
+      for( k = 1; k < _t.getDim()-2; ++k ) if( t < _t[k+1] ) break;
+
+      // If right-evaluation, find first knot
+      if(!l) while( std::abs( _t[k] - _t[k-1] ) < 1e-5 ) --k;
+    }
 
     // Evaluating first Local Curve @ (t-_t[k-1])/(_t[k+1]-_t[k-1])
-    DVector<Vector<T,3>> c0 = _c[ii[0]]->evaluateParent(t, d);
+    DVector< Vector<T,3> > c0 = _c[k-1]->evaluateParent( mapToLocal(t,k), d);
 
     // If t == _t[k], the sample is at the knot, set the values to the values of the first local curve.
-    if(std::abs(t - _t[k]) < 1e-5) { this->_p = c0; return; }
+    if( std::abs(t - _t[k]) < 1e-5 ) { this->_p = c0; return; }
+
 
     // Evaluating second Local Curve @ (t-_t[k])/(_t[k+2]-_t[k)
-    this->_p = _c[ii[1]]->evaluateParent(t - (ii[0]<ii[1] ? T(0):this->getParDelta()), d);
+    DVector< Vector<T,3> > c1 = _c[k]->evaluateParent( mapToLocal(t,k+1), d);
+
 
     // Blend c0 and c1
-    Vector<T,3>& B = getB(t, k, d);
-    compBlend( d, B, c0, this->_p );
+    if( _resamp_mode == GM_RESAMPLE_PREEVAL )
+      compBlend( d, _B[k], c0, c1 );
+    else {
+
+      DVector<T> B;
+      getB(B, k, t, d );
+      compBlend( d, B, c0, c1 );
+    }
   }
 
-
-
   template <typename T>
-  inline
-  void PERBSCurve<T>::compBlend(int d, const Vector<T,3>& B, DVector<Vector<T,3>>& c0, DVector<Vector<T,3>>& c1) const {
+  void PERBSCurve<T>::compBlend(int d, const DVector<T>& B, DVector<Vector<T,3> >& c0, DVector<Vector<T,3> >& c1) const {
 
     c0 -= c1;
+
     DVector<T> a(d+1);
-    for( int i = 0; i <= d; i++ )
+    for( int i = 0; i < B.getDim(); i++ )
     {
       // Compute the pascal triangle numbers
       a[i] = 1;
@@ -324,56 +207,31 @@ namespace GMlib {
       for( int j = 0; j <= i; j++ )
         c1[i] += (a[j] * B(j)) * c0[i-j];
     }
+    this->_p = c1;
   }
-
 
 
   template <typename T>
   inline
-  Vector<T,3>& PERBSCurve<T>::getB(T t, int k, int d) const {
+  int PERBSCurve<T>::findIndex( T t) const
+  {
+    return (this->_no_sam-1)*(t-this->getParStart())/(this->getParDelta())+0.1;
+  }
 
-    static Vector<T,3> B;
 
+  template <typename T>
+  inline
+  void PERBSCurve<T>::getB( DVector<T>& B, int k, T t, int d ) const {
+
+    B.setDim(d+1);
     _evaluator->set( _t[k], _t[k+1] - _t[k] );
     B[0] = 1 - (*_evaluator)(t);
     switch(d) {
+      case 3: B[3] = T(0);
       case 2: B[2] = - _evaluator->getDer2();
       case 1: B[1] = - _evaluator->getDer1();
     }
-    return B;
   }
-
-
-
-  template <typename T>
-  inline
-  DVector< PCurve<T,3>* >& PERBSCurve<T>::getLocalCurves() {
-    return _c;
-  }
-
-
-
-  template <typename T>
-  inline
-  const DVector< PCurve<T,3>* >& PERBSCurve<T>::getLocalCurves() const {
-    return _c;
-  }
-
-
-
-  template <typename T>
-  inline
-  int PERBSCurve<T>::getNoLocalCurves() const {
-    return _c.getDim();
-  }
-
-
-
-  template <typename T>
-  T PERBSCurve<T>::getStartP() const {
-    return _t(1);
-  }
-
 
 
   template <typename T>
@@ -381,6 +239,35 @@ namespace GMlib {
     return _t(_t.getDim()-2);
   }
 
+
+  template <typename T>
+  inline
+  DVector< PCurve<T,3>* >& PERBSCurve<T>::getLocalCurves() {
+
+    return _c;
+  }
+
+
+  template <typename T>
+  inline
+  const DVector< PCurve<T,3>* >& PERBSCurve<T>::getLocalCurves() const {
+
+    return _c;
+  }
+
+
+  template <typename T>
+  inline
+  int PERBSCurve<T>::getNoLocalCurves() const {
+
+    return _c.getDim();
+  }
+
+
+  template <typename T>
+  T PERBSCurve<T>::getStartP() const {
+    return _t(1);
+  }
 
 
   template <typename T>
@@ -391,33 +278,50 @@ namespace GMlib {
       _c[i]->setVisible( false, -1 );
   }
 
-
-
   template <typename T>
   inline
   void PERBSCurve<T>::showLocalCurves() {
 
     for( int i = 0; i < _c.getDim(); i++ ) {
+
       if( !_c[i]->getDefaultVisualizer() ) {
+
         _c[i]->enableDefaultVisualizer();
-        _c[i]->sample(10,0);
+        _c[i]->replot(10);
       }
+
       _c[i]->setVisible( true, -1 );
     }
   }
 
+
+  template <typename T>
+  void PERBSCurve<T>::init()
+  {
+
+    _no_sam           = 20;
+    _no_der           = 1;
+
+    _evaluator = new ERBSEvaluator<long double>();
+
+    _resamp_mode = GM_RESAMPLE_PREEVAL;
+    _pre_eval    = true;
+
+//    _resamp_mode = GM_RESAMPLE_INLINE;
+//    _pre_eval = false;
+//    _B.setDim(1);
+  }
 
 
   template <typename T>
   inline
   void PERBSCurve<T>::insertLocal( PCurve<T,3>* local ) {
 
-    local->toggleDefaultVisualizer();
-    local->sample( 30,0 );
+    local->replot( 30 );
     static Color cl= GMcolor::blue();
     local->setColor( cl );
     cl = cl.getInterpolatedHSV( 0.2, GMcolor::yellow() );
-    local->setVisible( true );
+    local->setVisible( false );
     local->setCollapsed( true );
     this->insert( local );
   }
@@ -427,7 +331,7 @@ namespace GMlib {
   inline
   bool PERBSCurve<T>::isClosed() const {
 
-    return _cl;
+    return _closed;
   }
 
 
@@ -442,7 +346,50 @@ namespace GMlib {
 
 
 
+  template <typename T>
+  inline
+  void PERBSCurve<T>::preSample( int m, int d, T start, T end ) {
 
+    // break out of the preSample function if no preevalution is to be used
+    switch( _resamp_mode ) {
+    case GM_RESAMPLE_PREEVAL:   break;
+    case GM_RESAMPLE_INLINE :
+    default:                    return;
+    }
+
+    // break out and return if preevaluation isn't necessary.
+    if( !_pre_eval && m == _tk.getDim() )   return;
+
+
+    // Set dimension for B and index value tables.
+    _B.setDim(m);
+    _tk.setDim(m);
+
+    int     tk = 1;
+    const T dt = ( end - start ) / T(m-1);  // sample step value
+
+    for( int i = 0; i < m; i++ )
+    {
+      const T t = getStartP() + T(i) * dt;  // Compute the "current" t value
+      // Calculate knot-index of sample nr. i
+      for( ; tk < _t.getDim()-2; tk++ ) if(t < _t[tk+1]) break;
+      _tk[i] = tk;
+
+      // Find the complementary B-Vector coherent with the current index.
+      if( !(std::abs(t - _t[tk]) < 1e-5) )
+        getB( _B[i], tk, t, d );
+    }
+
+    _pre_eval = false;
+  }
+
+
+  template <typename T>
+  inline
+  void PERBSCurve<T>::setResampleMode( GM_RESAMPLE_MODE mode ) {
+
+    _resamp_mode = mode;
+  }
 
 
   template <typename T>
@@ -454,63 +401,61 @@ namespace GMlib {
   }
 
 
+  template <typename T>
+  inline
+  PCurve<T,3>* PERBSCurve<T>::makeLocal(CURVE_TYPE type, PCurve<T,3>* g, T s, T t, T e, int d) {
 
+    switch(type) {
+    case SUB_CURVE:
+      return new PSubCurve<T>( g, s, e, t );
+    case ARC_CURVE:
+      return new PArc<T>(g->evaluateParent(t, 2), s, t, e);
+    case BEZIERCURVE:
+      return new PBezierCurve<T>(g->evaluateParent(t, d), s, t, e);
+    }
 
-
+    return NULL;
+  }
 
   template <typename T>
   inline
-  void PERBSCurve<T>::generateCuLenKnotVector( PCurve<T,3>* g, int n, bool closed ) {
+  T PERBSCurve<T>::mapToLocal(T t, int tk) const {
 
-      const T  sp = g->getParStart();
-      const T  ep = g->getParEnd();
+//    return getParStart() + (t-s)/(e-s) * getParDelta();
 
-      if(closed) {
-          const T  dt = (ep-sp)/n;
-          _t.setDim(n+3);
-          for(int i=0; i<n+3; i++ )
-              _t[i] = sp + (i-1) * dt;
-      }
-      else {
-          const T  dt = (ep-sp)/(n-1);
-          _t.setDim(n+2);
-          _t[0] = _t[1] = sp;             // Set the start knots
-          for(int i = 2; i < n; i++)
-              _t[i] = sp + (i-1)*dt;      // Set the "step"-knots
-          _t[n] = _t[n+1] = ep;           // Set the end knots
-      }
-      _cl = closed;
+    PCurve<T,3> *c = _c(tk-1);
+
+    const T cs = c->getParStart();
+    const T cd = c->getParDelta();
+
+    // Fill in when support for multiple knots has been implemented and supported.
+    // See PERBSSurf
+
+    return cs + (t - _t(tk-1)) / ( _t(tk+1) - _t(tk-1) ) * cd;
   }
 
 
-
   template <typename T>
   inline
-  void PERBSCurve<T>::generateKnotVector( PCurve<T,3>* g, int n, bool closed ) {
+  void PERBSCurve<T>::generateKnotVector( PCurve<T,3>* g, int n ) {
 
     const T  sp = g->getParStart();
-    const T  ep = g->getParEnd();
+    const T  dt = g->getParDelta()/( n-1 );
 
-    if(closed) {
-        const T  dt = (ep-sp)/n;
-        _t.setDim(n+3);
-        for(int i=0; i<n+3; i++ )
-            _t[i] = sp + (i-1) * dt;
+    _t.setDim(n+2);
+
+    for( int i = 0; i < n; i++ )
+      _t[i+1] = sp + i * dt;
+
+    if( isClosed() ) {
+      _t[0]   = _t[1] - ( _t[n] - _t[n-1]);
+      _t[n+1] = _t[n] + ( _t[2] - _t[1]  );
     }
     else {
-        const T  dt = (ep-sp)/(n-1);
-        _t.setDim(n+2);           
-        _t[0] = _t[1] = sp;             // Set the start knots
-        for(int i = 2; i < n; i++)
-            _t[i] = sp + (i-1)*dt;      // Set the "step"-knots
-        _t[n] = _t[n+1] = ep;           // Set the end knots
+      _t[0]   = _t[1];
+      _t[n+1] = _t[n];
     }
-    _cl = closed;
-}
-
-
-
-
+  }
 
   template <typename T>
   inline
@@ -537,273 +482,110 @@ namespace GMlib {
     _c(tk)->setDomain( T(0.5), T(1) );
   }
 
-
-
-
-
-  //**************************************************
-  // Overrided (public) virtual functons from PSurf **
-  //**************************************************
-
-
-  /*! void PERBSCurve<T>::sample( int m, int d )
-   *  To sample and plot the curve.
-   *
-   *  \param  m  The number of samples to make
-   *  \param  d  The number of derivatives to compute
-   */
   template <typename T>
-  void PERBSCurve<T>::sample(int m, int d) {
+  void PERBSCurve<T>::insertVisualizer(Visualizer* visualizer)  {
 
-    this->_checkSampleVal( m, d );
+    PCurveVisualizer<T,3> *visu = dynamic_cast<PCurveVisualizer<T,3>*>( visualizer );
+    if( !visu ) {
 
-    for(uint i=1; i < this->_visu.size(); i++)
-       this->cleanVisualizers(i);
+      PCurve<T,3>::insertVisualizer( visualizer );
+      return;
+    }
 
-      // Make partitions, the parameter values and pre-evaluated b-functions for each partition
-    makePartition( m );
-    prepareSampling(d);
-    preSample(d);
-    this->prepareVisualizers();
-    this->setEditDone();
+    if( _pv.exist( visu ) )
+      return;
+
+    _pv += visu;
   }
 
-
-
-
-
-  /*! void  PERBSCurve<T>::preSample( int d )
-   *  \brief Private, not for public use
-   *
-   *  Compute all sample points for all partitions
-   *
-   *  \param  d   The number of derivatives to compute
-   */
   template <typename T>
-  void  PERBSCurve<T>::preSample( int d ) {
+  void PERBSCurve<T>::removeVisualizer(Visualizer* visualizer) {
 
-      // For all partisions,
-      // prepare the array of (start, end) index of sample points influented by a local curve
-      _cp_index.resize(_c.getDim());
-      for(uint i=0; i < _cp_index.size(); i++) {
-          _cp_index[i].setDim(_pre_basis.size());
-          for(int j=0; j < _cp_index[i].getDim(); j++)
-              _cp_index[i][j] = {std::numeric_limits<int>::max(),-1};
-      }
+    PCurveVisualizer<T,3> *visu = dynamic_cast<PCurveVisualizer<T,3>*>( visualizer );
+    if( !visu ) {
 
-      for(int i=0; i<_c.getDim(); i++)                      // For each local curve
-          _c[i]->updateMat();
+      PCurve<T,3>::removeVisualizer( visualizer );
+      return;
+    }
 
-      // for hver partisjon -
-      for(uint i=0; i<_pre_basis.size(); i++) {                     // For each partition
-          this->_visu[i].sur_sphere.reset();                        // Reset surounding sphere
-          this->_visu[i].sample_val.resize(_pre_basis[i].size());   // Set number of sample points
-          for(uint j=0; j<_pre_basis[i].size(); j++) {              // for hvert sample-punkt i partisjonen
-              multEval( this->_visu[i].sample_val[j], _pre_basis[i][j].B, _pre_basis[i][j].ind, j, i);
-              this->_visu[i].sur_sphere += this->_visu[i].sample_val[j][0];
-              for(uint k=0; k<2; k++ ) {
-                  int i_p = _pre_basis[i][j].ind[k];
-                  if(int(j) < _cp_index[i_p][i][0]) _cp_index[i_p][i][0] = j;
-                  if(int(j) > _cp_index[i_p][i][1]) _cp_index[i_p][i][1] = j;
-              }
-          }
-      }
+    if( !_pv.exist( visu ) )
+      return;
+
+    _pv.remove(visu);
   }
 
-
-
-
-  /*! void  PERBSCurve<T>::updatSamples() const
-   *  \brief Private, not for public use
-   *
-   *  Update affected sample points for all partitions when some local curves has mover or rotated ...
-   */
   template <typename T>
-  void  PERBSCurve<T>::updatSamples() const {
-      if(_local_change.size() > 0) {
-          int k = _local_change.back();
-          std::vector<CpIndex> ind;
-          ind.resize(_pre_basis.size());
-          for(uint i=0; i<ind.size(); i++) // for all partisions
-            if(_cp_index[k][i][1]>=0)
-                ind[i].push_back(_cp_index[k][i]);
-          _c[k]->updateMat();
-          _local_change.pop_back();
-          while(!_local_change.empty()) { // for all changed curves
-              k = _local_change.back();
-              CpIndex lc_ind = _cp_index[k];
-              for(uint i=0; i<ind.size(); i++){ // for all partisions
-                  if(_cp_index[k][i][1]>=0) {
-                      if(ind[i].getDim()==0)
-                          ind[i].push_back(_cp_index[k][i]);
-                      else {
-                          int r = ind[i].getDim();
-                          for(int j=0; j<r; j++) { //for all interval i partision
-                              int s = isIntersecting(ind[i][j], lc_ind[i]);
-                              if(s==0) ind[i].push_back(lc_ind[i]);
-                              else if(s==2) ind[i][j] = lc_ind[i];
-                              else if(s==3) ind[i][j][0] = lc_ind[i][0];
-                              else if(s==4) ind[i][j][1] = lc_ind[i][1];
-                          }
-                      }
-                  }
-              }
-              _c[k]->updateMat();
-              _local_change.pop_back();
-          }
-          for(uint i=0; i<this->_visu.size(); i++) {  // for all partisions
-              for(int j=0; j<ind[i].getDim(); j++){
-                  for(int k = ind[i][j][0]; k <= ind[i][j][1]; k++){
-                      multEval( this->_visu[i].sample_val[k], _pre_basis[i][k].B, _pre_basis[i][k].ind, k, i);
-                  }
-              }
-          }
+  void PERBSCurve<T>::replot(int m, int d)  {
+
+
+
+    // Correct sample domain
+    if( m < 2 )       m = _no_sam;
+    else        _no_sam = m;
+
+    // Correct derivatives
+    if( d < 1 )       d = _no_der;
+    else        _no_der = d;
+
+
+    // pre-sampel / pre evaluate data for a given parametric curve, if wanted/needed
+    preSample( m, d, getStartP(), getEndP() );
+
+    // Predict number of "visualizer"-segments
+    DVector< Vector<float,2> > ps(0);
+    float prev_ppos = _t[1];
+    for( int i = 2; i < _t.getDim()-2; ++i ) {
+      if( std::abs( _t[i] - _t[i-1] ) <  1e-5 ) {
+
+        ps.append( Vector<float,2>( prev_ppos, _t[i-1]) );
+        prev_ppos = _t[i-1];
       }
-  }
+    }
+    ps.append( Vector<float,2>(prev_ppos,_t[_t.getDim()-2]) );
 
+    // Clean up
+    for( int i = 0; i < _pvi.getDim(); ++i )
+      for( int j = 0; j < _pvi[i].visus.getSize(); ++j )
+        PCurve<T,3>::removeVisualizer( _pvi[i].visus[j] );
 
+    if( _pvi.getDim() != ps.getDim() )
+      _pvi.resetDim( ps.getDim() );
 
+    // Insert new visualizers and replot
+    Sphere<T,3>  s;
+    DVector< DVector< Vector<T,3> > > p;
+    for( int i = 0; i < _pvi.getDim(); ++i ) {
 
+      // Update sub-visualizer set
+      _pvi[i].updateVisualizerSet(_pv);
+      _pvi[i].segment = ps[i];
 
+      // Get visualizer and domain of i-th sub-visualizer set
+      const Array< PCurveVisualizer<T,3>* > &sub_visus  = _pvi[i].visus;
+      const Vector<float,2>                 &segment     = _pvi[i].segment;
 
-  /*!  void  makePartition( std::vector<Partition2<T>>& partition, const DVector<T>& t, int k, int n, int dis, int m, bool close = false )
-   *  To make a partitioning and preevaluate basis functions of the sample points of a spline.
-   *  We split the curve in partition based on continuity criteria, (continuity C^_pct)
-   *  For each partition we find the parameter values for all sample points and put it into this->_visu[i][j],
-   *      where i is the index of the partition and j is the index of the sample points in partition i.
-   *  For each partition and sample point we also compute the B-spline Hermite matrix and put it into _pre_basis
-   *      together with a vector of indices, _pre_basis[i][j].ind, of the control points that is conected to each colomn of the matrix.
-   *
-   *  \param[in]  m          the initial sugestion of the total number of sample points
-   */
-    template <typename T>
-    inline
-    void PERBSCurve<T>::makePartition( int m ) const {
+      for( int j = 0; j < sub_visus.getSize(); ++j )
+        PCurve<T,3>::insertVisualizer( sub_visus(j) );
 
-        if(_type_local == SUB_CURVE) {
-            this->_visu.resize((_origin->getSampler())->size());
-            _pre_basis.resize((_origin->getSampler())->size());
-            for(uint i=0; i<this->_visu.size(); i++) {
-                this->_visu[i] = _origin->getSampleValues(i);
-                _pre_basis[i].resize(this->_visu[i].size());
+      // Resample i-th segment
+      this->resample( p, m, d, segment(0), segment(1) );
 
-                for(uint j=0; j<_pre_basis[i].size()-1; j++) {
-                    int k = EvaluatorStatic<T>::knotIndex(_t, this->_visu[i][j], 1, false);
-                    IndexBsp ii( k, 2, _c.getDim());
-                    _pre_basis[i][j].B = getB(this->_visu[i][j],k,2);
-                    _pre_basis[i][j].ind[0] = ii[0];
-                    _pre_basis[i][j].ind[1] = ii[1];
-                }
-                int k = EvaluatorStatic<T>::knotIndex(_t, this->_visu[i][_pre_basis[i].size()-1], 1, true);
-                IndexBsp ii( k, 2, _c.getDim());
-                _pre_basis[i][_pre_basis[i].size()-1].B = getB(this->_visu[i][_pre_basis[i].size()-1],k,2);
-                _pre_basis[i][_pre_basis[i].size()-1].ind[0] = ii[0];
-                _pre_basis[i][_pre_basis[i].size()-1].ind[1] = ii[1];
-            }
-        }
-        else {
-            VisPart<T> pu( _t, 2, _pct );
-            SampNr<T>  su( _t, pu, m );
-            this->_visu.resize(su.size());
-            _pre_basis.resize(su.size());
+      // Replot visualizers of i-th segment
+      for( int j = 0; j < sub_visus.getSize(); ++j )
+        sub_visus(j)->replot( p, m, d, (_pvi.getDim() == 1) && isClosed() );
 
-            for(uint i=0; i<this->_visu.size(); i++) {
-                computeUniformParamVal(this->_visu[i], su[i], _t[pu[2*i]], _t[pu[2*i+1]]);
-                _pre_basis[i].resize(su[i]);
-
-                for(int j=0; j<su[i]-1; j++) {
-                    int k = EvaluatorStatic<T>::knotIndex(_t, this->_visu[i][j], 1, false);
-                    IndexBsp ii( k, 2, _c.getDim());
-                    _pre_basis[i][j].B = getB(this->_visu[i][j],k,2);
-                    _pre_basis[i][j].ind[0] = ii[0];
-                    _pre_basis[i][j].ind[1] = ii[1];
-                }
-                int k = EvaluatorStatic<T>::knotIndex(_t, this->_visu[i][su[i]-1], 1, true);
-                IndexBsp ii( k, 2, _c.getDim());
-                _pre_basis[i][su[i]-1].B = getB(this->_visu[i][su[i]-1],k,2);
-                _pre_basis[i][su[i]-1].ind[0] = ii[0];
-                _pre_basis[i][su[i]-1].ind[1] = ii[1];
-            }
-        }
+      // Surrounding sphere
+      if( i == 0 )
+        s.resetPos( p(0)(0) );
+      else
+        s += p(0)(0);
+      s += p(p.getDim() - 1)(0);
+      for( int j = p.getDim() - 2; j > 0; j-- )
+        s += p(j)(0);
     }
 
-
-
-
-
-    template <typename T>
-    inline
-    void PERBSCurve<T>::prepareSampling( int d ) const {
-
-       if(_type_local == SUB_CURVE) {
-//         _origin->preSample(this->_visu);
-//         for(int i=0,s=0,e=0; i < _c.getDim(); i++) {
-//             for(int i=0; i< _t)
-//             _c[i]->
-//         }
-       }
-    }
-
-
-    /*! void PERBSCurve<T>::multEval(DVector<Vector<T,3>>& p, const Vector<T,3>& B, const Vector<int,2>& ii, int j, int i) const
-     *  Private, not for public use
-     *  Partial matrix vector multiplication,
-     *  only the d+1 first rows of the matrix,
-     *  and the part of the vector _c (the control points) with the indices in int-vector ii.
-     *  p = m * _c
-     *
-     *  \param[out]  p   Return value - The position and d derivatives
-     *  \param[in]   p   The B-function value including derivatives
-     *  \param[in]   ii  The index vector (size 2) to be used in _c
-     *  \param[in]   j   The number of sample to compute
-     *  \param[in]   i   The number of partition
-     */
-    template <typename T>
-    inline
-    void PERBSCurve<T>::multEval(DVector<Vector<T,3>>& p, const Vector<T,3>& B, const Vector<int,2>& ii, int j, int i) const {
-
-        p = _c[ii[1]]->evaluateParent(j,i);
-        compBlend( 1, B, _c[ii[0]]->evaluateParent(j,i), p );
-    }
-
-
-
-
-
-    template <typename T>
-    inline
-    int  PERBSCurve<T>::isIntersecting(const Vector<int,2>& a, const Vector<int,2>& b) const {
-
-        if(b[1] < (a[0]-1) || b[0] > (a[1]+1))    return 0;
-        if(a[0] <= b[0] && a[1] >= b[1])          return 1;
-        if(b[0] <= a[0] && b[1] >= a[1])          return 2;
-        if(b[0] < a[0])                           return 3;
-        if(b[1] > a[1])                           return 4;
-        else return -1;
-    }
-
-
-
-
-
-    //***************************************
-    //**   Local (private) help functons   **
-    //***************************************
-
-  /*! void  PERBSCurve<T>::init(bool closed)
-   *  \brief Private, not for public use
-   *
-   *  Default initiation for the constructors
-   *
-   *  \param[in]  closed   whether the curve is closed or not
-   */
-  template <typename T>
-  void PERBSCurve<T>::init(bool closed) {
-
-    this->_type_id = GM_SO_TYPE_CURVE_ERBS;
-    _cl            = closed;
-    _pct           = 0;
-    _evaluator     = new ERBSEvaluator<long double>();
+    // Set surrounding sphere
+    Parametrics<T,1,3>::setSurroundingSphere( s.template toType<float>() );
   }
 
 

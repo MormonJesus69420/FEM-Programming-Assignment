@@ -70,15 +70,13 @@ namespace GMlib {
       //***************************************
 
       // from SceneObject
-//      void                       edit(int selector) override;
-      void                       edit( int selector, const Vector<T,3>& dp ) override;
+      void                       edit(int selector) override;
 
       // from PSurf
       bool                       isClosedU() const override;
       bool                       isClosedV() const override;
       void                       showSelectors(T rad = T(1), bool grid = false, const Color& _selector_color = GMcolor::darkBlue(), const Color& grid_color = GMcolor::lightGreen() ) override;
       void                       hideSelectors() override;
-      void                       toggleSelectors() override;
 
   protected:
       // Protected data for the surface
@@ -114,7 +112,7 @@ namespace GMlib {
   private:
 
       // Virtual function from PSurf
-      void                       resample(DMatrix<DMatrix <Vector<T,3> > >& a, int m1, int m2, int d1, int d2, T s_u = T(0), T s_v = T(0), T e_u = T(0), T e_v = T(0)) const override;
+      void                       resample(DMatrix<DMatrix <Vector<T,3> > >& a, int m1, int m2, int d1, int d2, T s_u = T(0), T s_v = T(0), T e_u = T(0), T e_v = T(0)) override;
       void                       preSample( int dir, int m ) override;
 
       // Help functions

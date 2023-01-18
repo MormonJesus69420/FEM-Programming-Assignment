@@ -52,25 +52,25 @@ namespace GMlib {
     ScaleObject(Point<float,3>	sc);
 
     const HqMatrix<float,3>&  getMatrix() const;
-    float                     getMax() const;
-    Point<float,3>const&      getScale() const;
-    void                      glScaling();
+    float                   getMax() const;
+    Point<float,3>const&    getScale();
+    void                    glScaling();
 
-    bool                      isActive()  const;
+    bool                    isActive()  const;
 
-    void                      reset();
-    void                      reset(const Point<float,3>& sc);
-    void                      scale(const Point<float,3>& sc);
-    Sphere<float,3>           scaleSphere(const Sphere<float,3>& sp) const;
+    void                    reset();
+    void                    reset(const Point<float,3>& sc);
+    void                    scale(const Point<float,3>& sc);
+    Sphere<float,3>         scaleSphere(const Sphere<float,3>& sp) const;
 
 
   private:
-    bool                      _scaled;
-    Point<float,3>            _s;
-    HqMatrix<float,3>         _matrix;
-    float                     _max;
+    bool                    _scaled;
+    Point<float,3>          _s;
+    HqMatrix<float,3>       _matrix;
+    float                   _max;
 
-    void                      _updateMax();
+    void                    _updateMax();
 
 
   #ifdef GM_STREAM
@@ -156,9 +156,11 @@ namespace GMlib {
   const HqMatrix<float,3>& ScaleObject::getMatrix() const {
 
     static HqMatrix<float,3> mat;
+
     mat[0][0] = _s(0);
     mat[1][1] = _s(1);
     mat[2][2] = _s(2);
+
     return mat;
   }
 
@@ -174,13 +176,13 @@ namespace GMlib {
   }
 
 
-  /*! Point<float,3>const& ScaleObject::getScale()const
+  /*! Point<float,3>const& ScaleObject::getScale()
    *  \brief Pending Documentation
    *
    *  Pending Documentation
    */
   inline
-  Point<float,3>const& ScaleObject::getScale() const{
+  Point<float,3>const& ScaleObject::getScale() {
     return _s;
   }
 
@@ -225,16 +227,21 @@ namespace GMlib {
    */
   inline
   void ScaleObject::reset(const Point<float,3>& sc) {
-      if (!GMutils::compValueF(sc(0), 1.0f) ||
-          !GMutils::compValueF(sc(1), 1.0f) ||
-          !GMutils::compValueF(sc(2), 1.0f)) {
-          _s = sc;
-          _updateMax();
-          _scaled = true;
-      }
+    if (!GMutils::compValueF(sc(0), 1.0f) or !GMutils::compValueF(sc(0), 1.0f)
+        or !GMutils::compValueF(sc(2), 1.0f)) {
+      _s = sc;
+      _updateMax();
+      _scaled = true;
+    }
+
+//      if (sc (0) != 1 || sc (1) != 1 || sc (2) != 1) {
+//        _s = sc;
+//        _updateMax ();
+//        _scaled = true;
+//      }
       else {
-          _scaled = false;
-          _s      = sc;
+        _scaled = false;
+        _s      = sc;
       }
   }
 
@@ -249,7 +256,7 @@ namespace GMlib {
 
     _scaled=true;
     _s %= sc;
-//    _matrix.scale( sc );
+    _matrix.scale( sc );
     _updateMax();
   }
 
@@ -264,7 +271,7 @@ namespace GMlib {
 
     if(_scaled)
     {
-      if(sp.isValid()) return Sphere<float,3>(_max*sp.getPos(),_max*sp.getRadius());
+      if(sp.isValid()) return Sphere<float,3>(double(_max)*sp.getPos(),_max*sp.getRadius());
       else return sp;
     }
     else return sp;

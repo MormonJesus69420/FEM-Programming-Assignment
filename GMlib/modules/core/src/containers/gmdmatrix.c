@@ -44,7 +44,6 @@ namespace GMlib {
   DMatrix<T>::DMatrix(int i, int j) {
     _p = (i>4 ? new DVector<T>[i]:_init); _n=i;
     for (int k=0; k<_n; k++) _p[k].setDim(j);
-    _private = true;
   }
 
 
@@ -53,7 +52,6 @@ namespace GMlib {
   DMatrix<T>::DMatrix(int i, int j, T val) {
     _p = (i>4 ? new DVector<T>[i]:_init); _n=i;
     for(int k=0; k<_n; k++) _p[k].increaseDim(j, val);
-    _private = true;
   }
 
 
@@ -65,7 +63,6 @@ namespace GMlib {
     _n = i;
     for (int k=0; k<_n; k++) _p[k].setDim(j);
     _cpy(p);
-    _private = true;
   }
 
 
@@ -74,14 +71,13 @@ namespace GMlib {
   DMatrix<T>::DMatrix(const DMatrix<T>& v) {
     _n=0; _p=_init;
     _cpy(v);
-    _private = true;
   }
 
 
   template<typename T>
   inline
   DMatrix<T>::~DMatrix() {
-    if(_p != _init && _private) delete [] _p;
+    if(_p != _init) delete [] _p;
   }
 
 

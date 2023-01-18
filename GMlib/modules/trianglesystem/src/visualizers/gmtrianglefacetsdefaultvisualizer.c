@@ -102,7 +102,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void TriangleFacetsDefaultVisualizer<T>::replot(const TriangleFacets<T> *tf)  {
+  void TriangleFacetsDefaultVisualizer<T>::replot(TriangleFacets<T> *tf) {
 
     TriangleFacetsVisualizer<T>::fillStandardVBO( _vbo, tf );
     TriangleFacetsVisualizer<T>::fillStandardIBO( _ibo, tf );

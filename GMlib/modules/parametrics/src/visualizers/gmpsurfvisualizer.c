@@ -79,7 +79,7 @@ void PSurfVisualizer<T,n>::fillMap(GL::Texture& map, const DMatrix<DMatrix<Vecto
 
 template <typename T, int n>
 inline
-void PSurfVisualizer<T,n>::fillNMap( GL::Texture& nmap, const DMatrix< Vector<float, 3> >& ns, bool closed_u, bool closed_v) {
+void PSurfVisualizer<T,n>::fillNMap( GL::Texture& nmap, const DMatrix< Vector<T, 3> >& ns, bool closed_u, bool closed_v) {
 
     int m1 = closed_u ? ns.getDim1()-1 : ns.getDim1();
     int m2 = closed_v ? ns.getDim2()-1 : ns.getDim2();
@@ -218,7 +218,7 @@ void PSurfVisualizer<T,n>::fillTriangleStripIBO(GL::IndexBufferObject& ibo, int 
 
 template <typename T, int n>
 inline
-void PSurfVisualizer<T,n>::fillTriangleStripNormalVBO( GLuint vbo_id, DMatrix< Vector<float,3> >& normals ) {
+void PSurfVisualizer<T,n>::fillTriangleStripNormalVBO( GLuint vbo_id, DMatrix< Vector<T,3> >& normals ) {
 
   int no_normals = (normals.getDim1()-1) * normals.getDim2() * 2;
 
@@ -233,8 +233,8 @@ void PSurfVisualizer<T,n>::fillTriangleStripNormalVBO( GLuint vbo_id, DMatrix< V
       for( int j = 0; j < normals.getDim2(); j++ ) {
         // Normals
         const int idx_j = (idx_i + (j*2)) * 3;
-        const UnitVector<float,3> n1 = normals[i  ][j];
-        const UnitVector<float,3> n2 = normals[i+1][j];
+        const UnitVector<T,3> n1 = normals[i  ][j];
+        const UnitVector<T,3> n2 = normals[i+1][j];
         for( int k = 0; k < 3; k++ ) {
           const int idx_k = idx_j + k;
           ptr[idx_k]   = n1(k);
@@ -299,11 +299,14 @@ void PSurfVisualizer<T,n>::fillTriangleStripVBO( GLuint vbo_id, DMatrix< DMatrix
   if( ptr ) {
 
     for( int i = 0; i < p.getDim1()-1; i++ ) {
+
       const int idx_i = i * p.getDim2() * 2;
       for( int j = 0; j < p.getDim2(); j++ ) {
+
         // Populate data
         const int idx_j = (idx_i + (j*2)) * 3;
         for( int k = 0; k < 3; k++ ) {
+
           const int idx_k = idx_j + k;
           ptr[idx_k]   = p[ i   ][j][d1][d2][k];
           ptr[idx_k+3] = p[ i+1 ][j][d1][d2][k];
@@ -343,7 +346,7 @@ void PSurfVisualizer<T,n>::getTriangleStripDataInfo( const DMatrix< DMatrix< Vec
 template <typename T, int n>
 void PSurfVisualizer<T,n>::replot(
   const DMatrix< DMatrix< Vector<T,n> > >& /*p*/,
-  const DMatrix< Vector<float,3> >& /*normals*/,
+  const DMatrix< Vector<T,3> >& /*normals*/,
   int /*m1*/, int /*m2*/, int /*d1*/, int /*d2*/,
   bool /*closed_u*/, bool /*closed_v*/
 ) {}
@@ -353,7 +356,7 @@ void PSurfVisualizer<T,n>::replot(
 template <typename T, int n>
 void PSurfVisualizer<T,n>::replot(
   const DVector< DVector< Vector<T, n> > >& /*p*/,
-  const DMatrix< Vector<float,3> >& /*normals*/,
+  const DMatrix< Vector<T,3> >& /*normals*/,
   int /*m*/, bool /*closed_u*/, bool /*closed_v*/
 ) {}
 

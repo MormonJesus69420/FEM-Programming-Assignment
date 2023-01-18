@@ -56,17 +56,12 @@ namespace GMlib {
     void                          setSelectors( DVector< Vector<T,3> >& c, int tp=0, bool closed = false );
     void                          setSelectors( DMatrix< Point<T,3> >& c, bool closed_u = false, bool closed_v = false );
     void                          setSelectors( DMatrix< Vector<T,3> >& c, bool closed_u = false, bool closed_v = false);
-    void                          setScale(const Vector<T,3>& s);
+    void                          update();
 
-    void                          update() override;
   protected:
-
-
     int                           _no_indices;
     float                         _line_width;
     DVector< Point<T,3>* >        _c;
-    bool                          _scaled;
-    Vector<T,3>                   _scale;
 
     GL::Program                   _prog;
 

@@ -1,6 +1,6 @@
 /**********************************************************************************
 **
-** Copyright (C) 1994/2016 University of Tromsø - The Arctic University of Norway
+** Copyright (C) 1994 Narvik University College
 ** Contact: GMlib Online Portal at http://episteme.hin.no
 **
 ** This file is part of the Geometric Modeling Library, GMlib.
@@ -25,8 +25,9 @@
 
 namespace GMlib {
 
-template <typename T>               // Described on page 91-92 in "Blend book"
+template <typename T>
 void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
+    // Described on page 91-92 in "Blend book"
 
     // Initiate result matrix
     mat.setDim( d+1, d+1 );
@@ -70,27 +71,63 @@ void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
   inline
   int EvaluatorStatic<T>::evaluateBSp( DMatrix<T>& mat, T t, const DVector<T>& tv, int d, bool left, T scale ){
 
-      // Find knot-index i such that: tv[i] <= t <  tv[i+1] if right-evaluation
-      // else                         tv[i] <  t <= tv[i+1] if left-evaluation
-      int i = knotIndex(tv, t, d, left);
-      EvaluatorStatic<T>::evaluateBSp2( mat, t, tv, d, i, scale );
-      return i;
-  }
+      // Find knot-index i such that: tv[ii] <= t < tv[ii+1] if right-evaluation
+      // else if left-evaluation      tv[ii] < t <= tv[ii+1]
+      int ii = knotIndex(tv, t, d, left);
 
-
-  template <typename T>
-  void EvaluatorStatic<T>::evaluateBSp2( DMatrix<T>& mat, T t, const DVector<T>& tv, int d, int ii, T scale ){
-
-      // Knot-index ii must be: tv[ii] <= t <  tv[ii+1] if right-evaluation
-      // else                   tv[ii] <  t <= tv[ii+1] if left-evaluation
-
-      // For the linar factor - mapping the knot intervalls to [0,1].
+      // For the linar factor - function mapping the knot intervalls to [0,1].
       DVector<T> w(d);
 
       // Compute the B-splines (polynomials), degree 1 -> d, one for each row.
       // Starts from the second bottom row (degree 1), then goes upwards (degree 2,...,d).
       mat.setDim( d+1, d+1 );
+      mat[d-1][1] = getW( tv, t, ii, 1 );
+      mat[d-1][0] = 1 - mat[d-1][1];
 
+      for( int i = d - 2, k = 2; i >= 0; i--, k++ ) {
+          // Generate w, expression 5.45 (page 119) in "Blend book".
+          for( int j = 0; j < k; j++ )
+              w[j] = getW( tv, t, ii-k+j+1, k );
+
+          // Compute the k b-splines
+          mat[i][0] = ( 1 - w[0]) * mat[i+1][0];
+          for( int j = 1; j < d - i; j++ )
+              mat[i][j] = w[j-1] * mat[i+1][j-1] + (1 - w[j]) * mat[i+1][j];
+          mat[i][d-i] = w[k-1] * mat[i+1][d-i-1];
+      }
+
+      // Compute all deriatives for the derivatives B-splines (polynomials), 1st, 2nd,...,d-order derivatives.
+      mat[d][1] =  delta( tv, ii, 1, scale);
+      mat[d][0] = -mat[d][1];
+
+      for( int k = 2; k <= d; k++ ) {
+          // Generate w' (delta) for the derivatives, expression 5.47 (page 121) in "Blend book".
+          for( int j = 0; j < k; j++ )
+              w[j] = k * delta( tv, ii-k+j+1, k, scale);
+
+          for( int i = d; i > d - k; i--) {
+              mat[i][k] = w[k-1] * mat[i][k-1];
+              for( int j = k - 1; j > 0; j--)
+                  mat[i][j] = w[j-1]*mat[i][j-1] - w[j]*mat[i][j] ;
+              mat[i][0] = - w[0] * mat[i][0];
+          }
+      }
+      return ii;
+  }
+
+
+  template <typename T>
+  inline
+  void EvaluatorStatic<T>::evaluateBSp2( DMatrix<T>& mat, T t, const DVector<T>& tv, int d, int ii, T scale ){
+
+      // The knot-index ii must be such that: tv[ii] <= t <= tv[ii+1], depending on left / right evaluation
+
+      // For the linar factor - function mapping the knot intervalls to [0,1].
+      DVector<T> w(d);
+
+      // Compute the B-splines (polynomials), degree 1 -> d, one for each row.
+      // Starts from the second bottom row (degree 1), then goes upwards (degree 2,...,d).
+      mat.setDim( d+1, d+1 );
       mat[d-1][1] = getW( tv, t, ii, 1 );
       mat[d-1][0] = 1 - mat[d-1][1];
 
@@ -134,6 +171,7 @@ void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
       T t3 = t*t2;
 
       // Compute the four Hermite polynomials (f_1, f_2, f'_1, f'_2)
+
       // expression 4.16 (page 78) in "Blend book".
       mat[0][1] = 3*t2 - 2*t3;
       mat[0][0] = 1 - mat[0][1];
@@ -171,6 +209,7 @@ void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
       T t5 = t*t4;
 
       // Compute the six Hermite polynomials (f_1, f_2, f'_1, f'_2, f''_1, f''_2)
+
       // expression 4.23 (page 81) in "Blend book".
       mat[0][1] = 10*t3 - 15*t4 + 6*t5;
       mat[0][0] =  1 - mat[0][1];
@@ -226,10 +265,8 @@ void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
   template <typename T>
   inline
   int EvaluatorStatic<T>::knotIndex(const DVector<T>& tv, T t, int d, bool left) {
-      // Return knot-index i such that: tv[i] <= t <  tv[i+1] if right-evaluation
-      // else                           tv[i] <  t <= tv[i+1] if left-evaluation
       int i = d;
-      int j = tv.getDim()-d-1;  // = n
+      int j = tv.getDim()-d-1;
       if(left){
           do{
               int k=(i+j)/2;
@@ -246,21 +283,6 @@ void EvaluatorStatic<T>::evaluateBhp( DMatrix<T>& mat, int d, T t, T scale ) {
       }
       return i;
   }
-
-
-
-
-
-  template <typename T>
-  inline
-  T EvaluatorStatic<T>::knotInterval( const DVector<T>& t, int d, int n ) {
-      // Return average knot-interval, that is average for intervalls different from zero
-      int i = 0;
-      for(int j=d; j<n; j++)
-          if(t[j+1] > t[j]) i++;
-      return (t[n]-t[d])/T(i);
-  }
-
 
 
 

@@ -36,7 +36,6 @@ namespace GMlib {
   template <typename T>
   class PCircle : public PCurve<T,3> {
     GM_SCENEOBJECT(PCircle)
-
   public:
     PCircle( T radius = T(20) );
     PCircle( const PCircle<T>& copy );
@@ -52,10 +51,9 @@ namespace GMlib {
 
     // from PCurve
     bool                isClosed() const override;
-    void                setSurroundingSphere( const std::vector< DVector< Vector<T,3> > >& p ) const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;

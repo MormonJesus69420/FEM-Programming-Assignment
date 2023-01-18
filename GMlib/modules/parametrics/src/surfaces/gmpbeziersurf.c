@@ -196,17 +196,15 @@ namespace GMlib {
 
 
   template <typename T>
-  void PBezierSurf<T>::edit( int selector_id, const Vector<T,3>& dp  ) {
+  void PBezierSurf<T>::edit( int /*selector_id*/ ) {
 
     _c_moved = true;
 
     if( this->_parent )
       this->_parent->edit( this );
 
-//    if(_sgv)
-//        _sgv->update();
+    if(_sgv) _sgv->update();
 
-    this->setEditDone();
     _c_moved = false;
   }
 
@@ -286,18 +284,6 @@ namespace GMlib {
 
 
 
-  /*! void PBezierSurf<T>::toggleSelectors()
-   *  To toggle the selectors and selector grid.
-   */
-  template <typename T>
-  void PBezierSurf<T>::toggleSelectors() {
-
-    if(_selectors)  hideSelectors();
-    else            showSelectors();
-  }
-
-
-
   //*****************************************************
   // Overrided (protected) virtual functons from PSurf **
   //*****************************************************
@@ -370,7 +356,7 @@ namespace GMlib {
 
   template <typename T>
   void PBezierSurf<T>::resample( DMatrix< DMatrix < Vector<T,3> > >& p,
-                                 int m1, int m2, int d1, int d2, T s_u, T s_v, T e_u, T e_v ) const{
+                                 int m1, int m2, int d1, int d2, T s_u, T s_v, T e_u, T e_v ) {
       // Set Dimensions
       this->_p.setDim(d1+1,d2+1);
       p.setDim(m1, m2);

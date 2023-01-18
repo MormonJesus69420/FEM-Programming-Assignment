@@ -25,6 +25,7 @@
 
 
 #include "gmvisualizer.h"
+
 #include "gmsceneobject.h"
 
 // gmlib
@@ -32,10 +33,16 @@
 
 using namespace GMlib;
 
+Visualizer::Visualizer() : _display_mode(DISPLAY_MODE_SHADED) {}
+
+Visualizer::Visualizer( const Visualizer& copy ) : _display_mode(copy._display_mode) {}
 
 Visualizer::~Visualizer() {}
 
+Visualizer::DISPLAY_MODE Visualizer::getDisplayMode() const {
 
+  return _display_mode;
+}
 
 void Visualizer::glSetDisplayMode() const {
 
@@ -45,13 +52,14 @@ void Visualizer::glSetDisplayMode() const {
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 }
 
+void Visualizer::setDisplayMode( Visualizer::DISPLAY_MODE display_mode) {
 
+  _display_mode = display_mode;
+}
 
 void Visualizer::simulate( double dt ) {
   GM_UNUSED(dt)
 }
-
-
 
 void Visualizer::toggleDisplayMode() {
 
@@ -61,17 +69,10 @@ void Visualizer::toggleDisplayMode() {
     _display_mode = Visualizer::DISPLAY_MODE_SHADED;
 }
 
-
-
 bool Visualizer::operator == ( const Visualizer* v ) const {
 
   if( this == v )
     return true;
+
   return false;
-}
-
-
-
-void Visualizer::update() {
-
 }

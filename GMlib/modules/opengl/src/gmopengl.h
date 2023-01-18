@@ -86,7 +86,6 @@
 #include <iostream>
 
 
-
 namespace GMlib {
 
 namespace GL {

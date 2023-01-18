@@ -25,7 +25,6 @@
 
 namespace GMlib {
 
-
   template <typename T, int m, int n>
   inline
   Parametrics<T,m,n>::Parametrics() {
@@ -35,12 +34,10 @@ namespace GMlib {
   }
 
 
-
   template <typename T, int m, int n>
   inline
   Parametrics<T,m,n>::Parametrics( const Parametrics<T,m,n>& copy )
-    : SceneObject( copy ), _dm{copy._dm}, _A{copy._A} {}
-
+    : SceneObject( copy ), _dm{copy._dm}, _A{copy._A}, _b{copy._b} {}
 
 
   template <typename T, int m, int n>
@@ -48,11 +45,11 @@ namespace GMlib {
   Parametrics<T,m,n>::~Parametrics() {}
 
 
-
   template <typename T, int m, int n>
   void Parametrics<T,m,n>::_initSoType() {
 
     switch( m ) {
+
       case GM_POINT:
         this->_type_id = GM_SO_TYPE_POINT;
         break;
@@ -72,12 +69,13 @@ namespace GMlib {
   }
 
 
-
   template <typename T, int m, int n>
   void Parametrics<T,m,n>::setDerivationMethod( GM_DERIVATION_METHOD method ) {
 
     _dm = method;
   }
+
+
 
 
 

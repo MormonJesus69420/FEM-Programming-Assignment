@@ -51,7 +51,7 @@ namespace GMlib {
     void          render(const SceneObject *obj, const DefaultRenderer *renderer) const;
     void          renderGeometry( const SceneObject *obj, const Renderer *renderer, const Color &color ) const;
 
-    void          replot(const TriangleFacets<T> *tf);
+    void          replot(TriangleFacets<T> *tf);
 
 
 

@@ -40,7 +40,6 @@ namespace GMlib {
     GM_VISUALIZER(PCurveDefaultVisualizer)
   public:
     PCurveDefaultVisualizer();
-    PCurveDefaultVisualizer(std::vector<DVector<Vector<T,3>>>& p);
     PCurveDefaultVisualizer( const PCurveDefaultVisualizer<T,n>& copy );
 
     GLfloat       getLineWidth() const;
@@ -49,14 +48,12 @@ namespace GMlib {
     void          render(const SceneObject* obj, const DefaultRenderer* render) const override;
     void          renderGeometry( const SceneObject* obj, const Renderer* render, const Color& color ) const override;
 
-    void          replot( const std::vector< DVector< Vector<T, n> > >& p, int m, int d, bool closed = false ) override;
-    void          update() override;
+    void          replot( const DVector< DVector< Vector<T, n> > >& p, int m, int d, bool closed  ) override;
 
   protected:
     GL::Program               _prog;
     GL::VertexBufferObject    _vbo;
     int                       _no_vertices;
-
     GLfloat                   _line_width;
 
   }; // END class PCurveDefaultVisualizer

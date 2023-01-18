@@ -31,8 +31,6 @@
 #ifdef GM_STREAM
 #include <iostream>
 
-
-
 namespace GMlib {
 
 

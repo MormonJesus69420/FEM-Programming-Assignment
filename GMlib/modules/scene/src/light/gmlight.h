@@ -55,9 +55,9 @@ namespace GMlib{
     bool                          isEnabled() const;
     void                          setEnabled( bool state );
     void                          setColor(
-                                    const Color& ambient = Color( 0.2f, 0.2f, 0.2f ),
-                                    const Color& diffuse = Color( 1.0f, 1.0f, 1.0f ),
-                                    const Color& specular= Color( 1.0f, 1.0f, 1.0f )
+                                    const Color& ambient = Color( 0.2, 0.2, 0.2 ),
+                                    const Color& diffuse = Color( 1.0, 1.0, 1.0 ),
+                                    const Color& specular= Color( 1.0, 1.0, 1.0 )
                                   );
 
     void                          setCullable( bool cullable );

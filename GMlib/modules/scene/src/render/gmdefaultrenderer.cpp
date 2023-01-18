@@ -708,7 +708,7 @@ namespace GMlib {
       GL::GLDirectionalLight dl;
       GL::OpenGLManager::fillGLDirectionalLight( dl,
                                                  sun->getGlobalAmbient(), GMcolor::black(), GMcolor::black(),
-                                                 cammat * (sun->getMatrix() * sun->getDir())
+                                                 cammat * sun->getMatrix() * sun->getDir()
                                                  );
       dirlights_data.push_back(dl);
     }
@@ -736,7 +736,7 @@ namespace GMlib {
                                          cammat * light->getGlobalPos(),
                                          light->getAttenuation(),
                                          cammat * light->getGlobalDir(),
-                                         std::cos( light->getCutOff().getDeg() * M_PI / 180.0f )
+                                         std::cos( light->getCutOff().getDeg() * M_PI / 180.0 )
                                          );
       spotlights_data.push_back(sl);
     }

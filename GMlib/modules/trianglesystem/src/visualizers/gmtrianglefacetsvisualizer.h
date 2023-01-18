@@ -44,7 +44,7 @@ namespace GMlib {
   public:
     TriangleFacetsVisualizer();
     ~TriangleFacetsVisualizer();
-    virtual void  replot( const TriangleFacets<T>* tf ) const;
+    virtual void  replot( TriangleFacets<T>* tf );
     void          set( SceneObject* obj );
 
 

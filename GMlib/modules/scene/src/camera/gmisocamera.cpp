@@ -116,7 +116,7 @@ namespace GMlib {
    */
   void IsoCamera::resetC(float z) {
 
-    _horizontal  = z;
+    _horizontal  = double(z);
     _gw  = _gh  = 0.1;
     updateFrustum();
   }
@@ -129,7 +129,7 @@ namespace GMlib {
    */
   void IsoCamera::zoom(float z) {
 
-    _horizontal *= z;
+    _horizontal *= double(z);
     updateFrustum();
   }
 

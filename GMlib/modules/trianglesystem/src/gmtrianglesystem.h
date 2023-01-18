@@ -124,7 +124,7 @@ namespace GMlib {
     bool                              removeVertexNew( TSVertex<T>& v);
 
     void                              renderVoronoi();
-    void                              replot() const;
+    void                              replot();
 
     bool                              setConstEdge(TSVertex<T> v1, TSVertex<T> v2);
 
@@ -141,8 +141,8 @@ namespace GMlib {
     GLuint                            _vbo;
     GLuint                            _ibo;
 
-    mutable Array< TriangleFacetsVisualizer<T>*>  _tf_visualizers;
-    mutable TriangleFacetsDefaultVisualizer<T>*   _default_visualizer;
+    Array< TriangleFacetsVisualizer<T>* >   _tf_visualizers;
+    TriangleFacetsDefaultVisualizer<T>     *_default_visualizer;
 
   private:
     ArrayLX< TSEdge<T>* >             _edges;

@@ -39,9 +39,7 @@ namespace GMlib {
   class PBasisCurve : public PCurve<T,3> {
     GM_SCENEOBJECT(PBasisCurve)
   public:
-    PBasisCurve(T scale=T(1));
-    PBasisCurve( const PBasisCurve<T,G>& copy );
-
+    PBasisCurve();
     ~PBasisCurve();
 
     // Public local functions
@@ -56,7 +54,7 @@ namespace GMlib {
     bool                       isClosed() const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                       eval( T t, int d, bool l ) const override;
     T                          getEndP()   const override;
     T                          getStartP() const override;
@@ -65,8 +63,6 @@ namespace GMlib {
     // Private data for the curve
     BasisEvaluator<G>*         _B;
     int                        _d_no;
-
-    T                          _scale;
 
   }; // class ERBSBasisCurve
 

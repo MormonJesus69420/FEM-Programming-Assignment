@@ -96,7 +96,7 @@ namespace GMlib {
 
   template <typename T>
   inline
-  void TriangleFacetsVoronoiVisualizer<T>::replot() const {
+  void TriangleFacetsVoronoiVisualizer<T>::replot() {
 
 //    this->_tf->createVoronoi();
 

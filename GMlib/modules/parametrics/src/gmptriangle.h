@@ -103,7 +103,7 @@ namespace GMlib {
     virtual void                      resample( DVector<DVector<Vector<T,n> > > &p, int m, int d );
 
 
-//    std::string                       getIdentity() const;
+    std::string                       getIdentity() const;
 
     void                              setEval(int d);
     Parametrics<T,2,n>*               split( T t, int uv );

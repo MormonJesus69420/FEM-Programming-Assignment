@@ -28,8 +28,6 @@
 #include "../utils/gmstream.h"
 
 
-
-
 namespace GMlib {
 
 

@@ -80,9 +80,8 @@ namespace GMlib{
 
 
   private:
-    bool                _private;
     int                 _n;
-    DVector<T>*         _p;
+    DVector<T>         *_p;
     DVector<T>          _init[4];
 
     void                _cpy(const DMatrix<T>& v);

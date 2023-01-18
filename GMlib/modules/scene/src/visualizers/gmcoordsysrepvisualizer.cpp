@@ -51,8 +51,8 @@ namespace GMlib {
 
     // Compute the position of the of the "coordinate-system visualization"
     // Relevant to the camera position
-    float hh = -1.5*cam->getNearPlane()*cam->getAngleTan();
-    Point<float,3> cp(cam->getAspectRatio()*hh, hh, -cam->getNearPlane()-1.0);
+    float hh = -1.5*double(cam->getNearPlane()*cam->getAngleTan());
+    Point<float,3> cp(cam->getAspectRatio()*hh, hh, -double(cam->getNearPlane())-1.0);
     base_mvmat.translateGlobal(cp);
     mvmat.translateGlobal(cp);
 

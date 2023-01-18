@@ -38,32 +38,22 @@
 
 namespace GMlib {
 
-//  template <typename T, int n>
-//  class PCurve;
+  template <typename T, int n>
+  class PCurve;
 
   template <typename T, int n>
   class PCurveVisualizer : public Visualizer {
   public:
     PCurveVisualizer();
-    PCurveVisualizer( std::vector<DVector<Vector<T,3>>>& p );
-    PCurveVisualizer( const PCurveVisualizer<T,n>& copy );
-
     virtual ~PCurveVisualizer();
 
-    void set(std::vector<DVector<Vector<T,3>>>& p) {_p=&p;}
-
-    virtual void  replot( const std::vector< DVector< Vector<T, n> > >& p,
-                          int m, int d, bool closed = false);
-
+    virtual void  replot( const DVector< DVector< Vector<T, n> > >& p,
+                          int m, int d, bool closed );
 
     static void   fillStandardVBO( GL::VertexBufferObject& vbo,
-                                   const std::vector<DVector<Vector<T, n>>>& p,
-                                   int d = 0,
-                                   bool scale = false,
-                                   const Vector<T,n>& s = Vector<T,n>());
-
-  protected:
-    std::vector<DVector<Vector<T,3>>>* _p;
+                                   const DVector< DVector< Vector<T, n> > >& p,
+                                   int& no_vertices,
+                                   int d = 0 );
 
   }; // END class PCurveVisualizer
 

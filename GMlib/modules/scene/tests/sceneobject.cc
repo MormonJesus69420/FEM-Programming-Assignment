@@ -5,6 +5,7 @@
 #include <gmCoreModule>
 #include <gmscene.h>
 #include <gmsceneobject.h>
+#include "light/gmpointlight.h"
 using namespace GMlib;
 
 #include <vector>
@@ -38,6 +39,7 @@ namespace {
     EXPECT_EQ( up,   gold_up   );
     EXPECT_EQ( pos,  gold_pos );
   }
+
 
   TEST(Scene, SceneObject_set_default_and_get) {
 
@@ -151,6 +153,7 @@ namespace {
     EXPECT_EQ( up,   gold_up   );
     EXPECT_EQ( pos,  gold_pos );
   }
+
 
   TEST(Scene, SceneObject_rotate_90d_dir_get) {
 
@@ -581,7 +584,17 @@ namespace {
 //    EXPECT_EQ( pos,  gold_pos );
 //  }
 
+  TEST(Scene, SceneObject_set_pointligth) {
 
+    Scene scene;
+    Point<float,3> init_light_pos( 2.0, 4.0, 10 );
+
+    PointLight *light = new PointLight(  GMlib::GMcolor::white(), GMlib::GMcolor::white(),
+                                                       GMlib::GMcolor::white(), init_light_pos );
+    light->setAttenuation(0.8, 0.002, 0.0008);
+    scene.insertLight( light, false );
+
+  }
 }
 
 

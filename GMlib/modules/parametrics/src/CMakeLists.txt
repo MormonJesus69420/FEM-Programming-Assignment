@@ -53,7 +53,6 @@ list( APPEND HEADERS
   curves/gmpcircle.h
   curves/gmperbscurve.h
   curves/gmpline.h
-  curves/gmplogspiral.h
   curves/gmprosecurve.h
   curves/gmpsubcurve.h
   curves/gmpsurfcurve.h
@@ -72,7 +71,6 @@ list( APPEND HEADER_SOURCES
   curves/gmpcircle.c
   curves/gmperbscurve.c
   curves/gmpline.c
-  curves/gmplogspiral.c
   curves/gmprosecurve.c
   curves/gmpsubcurve.c
   curves/gmpsurfcurve.c

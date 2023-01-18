@@ -27,7 +27,7 @@ namespace GMlib {
 
 
   template <typename T>
-  BasisEvaluator<T>::BasisEvaluator( int m ) {
+  BasisEvaluator<T>::BasisEvaluator( int /*m*/ ) {
 
     _der = 1;
 //    set( 0, 1 );

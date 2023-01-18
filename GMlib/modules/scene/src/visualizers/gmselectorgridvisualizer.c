@@ -31,13 +31,12 @@ namespace GMlib {
 
 
   template <typename T>
-  SelectorGridVisualizer<T>::SelectorGridVisualizer() : _no_indices(0), _line_width(2.0f) {
+  SelectorGridVisualizer<T>::SelectorGridVisualizer() : _no_indices(0), _line_width(1.0f) {
 
     _prog.acquire("color");
     _vbo.create();
     _ibo.create();
     _color = GMcolor::lightGreen();
-    _scaled = false;
   }
 
 
@@ -51,24 +50,16 @@ namespace GMlib {
   template <typename T>
   void SelectorGridVisualizer<T>::_fillVBO() {
 
-      // Fill the vertice buffer
-      DVector<GL::GLVertex> dp( _c.getDim() );
-      if(_scaled) {
-          for( int i = 0; i < dp.getDim(); i++ ) {
-              dp[i].x = _scale[0]*((*_c[i])(0));
-              dp[i].y = _scale[1]*((*_c[i])(1));
-              dp[i].z = _scale[2]*((*_c[i])(2));
-          }
-      }
-      else {
-          for( int i = 0; i < dp.getDim(); i++ ) {
-              dp[i].x = (*_c[i])(0);
-              dp[i].y = (*_c[i])(1);
-              dp[i].z = (*_c[i])(2);
-          }
-      }
-      const GLsizeiptr data_size = _c.getDim() * sizeof(GL::GLVertex);
-      _vbo.bufferData( data_size, dp.getPtr(), GL_DYNAMIC_DRAW );
+    // Fill the vertice buffer
+    DVector<GL::GLVertex> dp( _c.getDim() );
+    for( int i = 0; i < dp.getDim(); i++ ) {
+      dp[i].x = (*_c[i])(0);
+      dp[i].y = (*_c[i])(1);
+      dp[i].z = (*_c[i])(2);
+    }
+
+    const GLsizeiptr data_size = _c.getDim() * sizeof(GL::GLVertex);
+    _vbo.bufferData( data_size, dp.getPtr(), GL_DYNAMIC_DRAW );
   }
 
   template <typename T>
@@ -91,7 +82,7 @@ namespace GMlib {
       _vbo.enable( vert_loc, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const GLvoid*>(0x0) );
 
       _ibo.bind();
-      glDrawElements( GL_LINES, _no_indices, GL_UNSIGNED_SHORT, (const GLvoid*)0x0 );
+      glDrawElements( GL_LINES, _no_indices, GL_UNSIGNED_SHORT, reinterpret_cast<const GLvoid*>(0x0) );
       _ibo.unbind();
 
       _vbo.disable( vert_loc );
@@ -111,15 +102,6 @@ namespace GMlib {
 
     _line_width = line_width;
   }
-
-
-  template <typename T>
-  void SelectorGridVisualizer<T>::setScale(const Vector<T,3>& s) {
-
-    _scale = s;
-    _scaled = true;
-  }
-
 
   template <typename T>
   void SelectorGridVisualizer<T>::setSelectors( DVector< Point<T,3> >& c, int tp, bool cl) {
@@ -164,8 +146,8 @@ namespace GMlib {
   {
     // Create the indice buffer
     int n = 2*(_c.getDim()-1);
-    _no_indices = n + (cl? 2 : 0);
-    std::vector<GLushort> indices(_no_indices);
+    _no_indices = n + (cl?2:0);
+    DVector<GLushort> indices(_no_indices);
     for(int i=0, j=0; i < n; i+=2, j++) {
       indices[i]   = j;
       indices[i+1] = j + 1;
@@ -175,7 +157,7 @@ namespace GMlib {
         indices[n+1] = _c.getDim() - 1;
     }
 
-    _ibo.bufferData( _no_indices * sizeof(GLushort), indices.data(), GL_DYNAMIC_DRAW );
+    _ibo.bufferData( _no_indices * sizeof(GLushort), indices.getPtr(), GL_DYNAMIC_DRAW );
   }
 
 
@@ -259,23 +241,15 @@ namespace GMlib {
   }
 
   template <typename T>
+  inline
   void SelectorGridVisualizer<T>::update() {
 
     GL::GLVertex *ptr = _vbo.mapBuffer<GL::GLVertex>();
+    for( int i = 0; i < _c.getDim(); ++i ) {
 
-    if(_scaled) {
-        for( int i = 0; i < _c.getDim(); ++i ) {
-            ptr[i].x = _scale[0]*((*_c[i])(0));
-            ptr[i].y = _scale[1]*((*_c[i])(1));
-            ptr[i].z = _scale[2]*((*_c[i])(2));
-        }
-    }
-    else {
-        for( int i = 0; i < _c.getDim(); ++i ) {
-            ptr[i].x = (*_c[i])(0);
-            ptr[i].y = (*_c[i])(1);
-            ptr[i].z = (*_c[i])(2);
-        }
+      ptr[i].x = (*_c[i])(0);
+      ptr[i].y = (*_c[i])(1);
+      ptr[i].z = (*_c[i])(2);
     }
     _vbo.unmapBuffer();
   }

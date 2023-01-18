@@ -36,7 +36,7 @@ namespace GMlib {
   class PChrysanthemumCurve : public PCurve<T,3> {
     GM_SCENEOBJECT(PChrysanthemumCurve)
   public:
-    PChrysanthemumCurve( T radius = T(1), T scale = T(0.8), T trans = T(0.4)  );
+    PChrysanthemumCurve( T radius = T(1) );
     PChrysanthemumCurve( const PChrysanthemumCurve<T>& copy );
 
     //****************************************
@@ -47,15 +47,13 @@ namespace GMlib {
     bool                isClosed() const override;
 
   protected:
-    // Virtual functions from PCurve, which have to be implemented locally
+    // Virtual function from PCurve that has to be implemented locally
     void                eval(T t, int d, bool l) const override;
     T                   getStartP() const override;
     T                   getEndP()   const override;
 
     // Protected data for the curve
     T             _r;
-    T             _trans;
-    T             _scale;
 
   }; // END class PChrysanthemumCurve
 

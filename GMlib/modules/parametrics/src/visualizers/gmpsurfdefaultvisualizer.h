@@ -52,7 +52,7 @@ namespace GMlib {
     void    render( const SceneObject* obj, const DefaultRenderer* renderer ) const override;
     void    renderGeometry( const SceneObject* obj, const Renderer* renderer, const Color& color ) const override;
 
-    void    replot( const DMatrix< DMatrix< Vector<T, n> > >& p, const DMatrix< Vector<float, 3> >& normals,
+    void    replot( const DMatrix< DMatrix< Vector<T, n> > >& p, const DMatrix< Vector<T, 3> >& normals,
                                             int m1, int m2, int d1, int d2, bool closed_u, bool closed_v ) override;
 
   protected:
